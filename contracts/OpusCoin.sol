@@ -7,7 +7,7 @@ contract OpusCoin {
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
 	function OpusCoin() {
-		balances[tx.origin] = 10000;
+		balances[msg.sender] = 10000;
 	}
 
 	function sendCoin(address receiver, uint amount) returns(bool sufficient) {
