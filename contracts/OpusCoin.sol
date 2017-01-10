@@ -2,7 +2,8 @@ pragma solidity ^0.4.2;
 
 import "./ConvertLib.sol";
 
-
+//TODO: change id mechanism to hash of resourceURL
+//TODO: maybe seperate structs into independent contracts
 contract OpusCoin{
 
 	mapping (address => uint) balances;
