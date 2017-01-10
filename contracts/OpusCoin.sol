@@ -25,6 +25,23 @@ contract OpusCoin{
 	  return ids;
 	}
 
+	function getWork(uint id) returns
+	  (
+	  uint _id,
+	  string name,
+	  uint price,
+	  address owner
+	  ){
+	  if(!workExist(id)){
+	    throw;
+	  }
+	  work _work = id2work[id];
+	  _id = id;
+	  name = _work.name;
+	  price = _work.price;
+	  owner = _work.owner;
+	}
+
   function workExist(uint id) returns (bool){
     //assuming id of an empty work is default 0
     return (id2work[id].id == id);
@@ -44,7 +61,6 @@ contract OpusCoin{
 		}
 		return fetchURL(id);
   }
-
 
 	function ownWork (uint id) returns (bool){
 		if(!workExist(id)){
