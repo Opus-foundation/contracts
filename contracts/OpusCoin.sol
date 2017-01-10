@@ -21,7 +21,9 @@ contract OpusCoin{
   //TODO: compare gas cost between using a mapping or an array
   mapping (address => uint[]) private workOwnership;
 
-
+	function getIds() returns (uint[]){
+	  return ids;
+	}
 
   function workExist(uint id) returns (bool){
     //assuming id of an empty work is default 0
