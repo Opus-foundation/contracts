@@ -43,7 +43,6 @@ contract OpusCoin{
 	}
 
   function workExist(uint id) returns (bool){
-    //assuming id of an empty work is default 0
     return (id2work[id].id == id);
   }
 
@@ -125,5 +124,13 @@ contract OpusCoin{
 
 	function balanceOf(address addr) returns(uint) {
 		return balances[addr];
+	}
+
+	function checkBalance() returns (uint){
+		return getBalance(msg.sender);
+	}
+
+	function getAddress() returns (address){
+		return msg.sender;
 	}
 }
