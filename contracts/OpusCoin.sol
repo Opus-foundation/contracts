@@ -67,7 +67,7 @@ contract OpusCoin{
 
 	function ownWork (uint id) returns (bool){
 		if(!workExist(id)){
-			return false;
+			throw;
 		}
 		uint[] works = workOwnership[msg.sender];
     for(uint i=0; i<works.length; i++){
@@ -85,11 +85,9 @@ contract OpusCoin{
   function purchaseWork (uint id) {
     if (!workExist(id)){
 			throw;
-      //return 1;
     }
 		if (ownWork(id)){
 			throw;
-			//return 2;
 		}
     work _work = id2work[id];
     if(sendCoin(_work.owner, _work.price)){
@@ -115,7 +113,7 @@ contract OpusCoin{
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 	event PurchaseWork(address purchaser, uint _id, address _owner, uint _price);
 	function OpusCoin() {
-		balances[tx.origin] = 10000;
+		balances[msg.sender] = 10000;
 	}
 
 	function transfer(address receiver, uint amount) returns(bool success) {
