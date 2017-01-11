@@ -55,6 +55,10 @@ contract OpusCoin{
   }
 
   function requestURL(uint id) returns (string){
+			//TODO: add log
+			//TODO: optimize checking cost; consider using mapping
+			//TODO: optimize for work owner
+			//Debug: when user does not own song
     if(!ownWork(id)){
 			return "you do not own it";
 		}
