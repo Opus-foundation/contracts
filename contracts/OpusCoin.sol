@@ -1,9 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./ConvertLib.sol";
 
-//TODO: change id mechanism to hash of resourceURL
-//TODO: maybe seperate structs into independent contracts
 contract OpusCoin{
 
 	mapping (address => uint) balances;
@@ -18,7 +15,6 @@ contract OpusCoin{
 	uint[] ids;
 
   mapping (uint => work) private id2work;
-  //TODO: compare gas cost between using a mapping or an array
   mapping (address => uint[]) private workOwnership;
 
 	function getIds() returns (uint[]){
@@ -55,10 +51,6 @@ contract OpusCoin{
   }
 
   function requestURL(uint id) returns (string){
-			//TODO: add log
-			//TODO: optimize checking cost; consider using mapping
-			//TODO: optimize for work owner
-			//Debug: when user does not own song
     if(!ownWork(id)){
 			return "you do not own it";
 		}
@@ -98,7 +90,6 @@ contract OpusCoin{
 
 
 	function uploadWork(string _name, uint _price, string _resourceURL) {
-	//TODO: add log
 		lastId += 1;
 		work memory _work = work(lastId, _name, _price, msg.sender, _resourceURL);
 		id2work[lastId] = _work;
