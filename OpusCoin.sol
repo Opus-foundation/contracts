@@ -1,7 +1,7 @@
 
 pragma solidity ^0.4.8;
 
-import "../zeppelin-solidity/contracts/token/StandardToken.sol";
+import "./contracts/token/StandardToken.sol";
 import "./ConvertLib.sol";
 
 contract OpusCoin is StandardToken{
