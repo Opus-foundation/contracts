@@ -3,12 +3,61 @@ pragma solidity ^0.4.8;
 
 import "../zeppelin-solidity/contracts/token/StandardToken.sol";
 import "./ConvertLib.sol";
+import './pay2own.sol';
+
+
+// This is just a simple example of a coin-like contract.
+// It is not standards compatible and cannot be expected to talk to other
+// coin/token contracts. If you want to create a standards-compliant
+// token, see: https://github.com/ConsenSys/Tokens. Cheers!
+
+
 
 contract OpusCoin is StandardToken{
+string public constant name = "OpusCrowdSaleToken1";
+string public constant symbol = "OCST1";
+uint public constant decimals = 1;
+address public constant multisig = "0x41A6b259baac5C2084Bdd623F3Ac03b4cfAC3887";
+// 1 ether = 500 example tokens
+uint public constant PRICE = 8888;
 
+/**
+ * @dev Fallback function which receives ether and sends the appropriate number of tokens to the
+ * msg.sender.
+ */
+function () payable {
+	createTokens(msg.sender);
+}
+
+/**
+ * @dev Creates tokens and send to the specified address.
+ * @param recipient The address which will recieve the new tokens.
+ */
+function createTokens(address recipient) payable {
+	if (msg.value == 0) {
+		throw;
+	}
+
+	uint tokens = msg.value.mul(getPrice()).div(10**18);
+	totalSupply = totalSupply.add(tokens);
+
+	balances[recipient] = balances[recipient].add(tokens);
+
+	if (!multisig.send(msg.value)) {
+		throw;
+	}
+}
+
+/**
+ * @dev replace this with any other price function
+ * @return The price per unit of token.
+ */
+function getPrice() constant returns (uint result) {
+	return PRICE;
+}
 
 	function OpusCoin() {
-		balances[msg.sender] = 10000;
+		//balances[tx.origin] = 10000;
 	}
 
 
@@ -53,7 +102,7 @@ contract OpusCoin is StandardToken{
 	  */
 	  function balanceOf(address _owner) constant returns (uint balance) {
 	    return balances[_owner];
-	 
+	  }
 
 	  function transferToContract(address _to, uint _value, bytes _data) private returns(bool success){
 	    balances[msg.sender] = balances[msg.sender].sub( _value);
@@ -64,6 +113,10 @@ contract OpusCoin is StandardToken{
 	    //Transfer(msg.sender, _to, _value, _data);
 	    return true;
 	  }
+
+		function getContractAddress() external constant returns(address) {
+			return this;
+		}
 
 
 }
