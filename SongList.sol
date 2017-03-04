@@ -14,4 +14,8 @@ contract SongList{
   function getOwnedSongs() external constant returns(address[]){
     return ownedSongs[msg.sender];
   }
+
+  function getContractAddress() external constant returns(address) {
+    return this;
+  }
 }
