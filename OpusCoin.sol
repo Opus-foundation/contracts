@@ -20,7 +20,11 @@ contract OpusCoin is StandardToken{
  * msg.sender.
  */
     uint public startBlock; //crowdsale start block (set in constructor)
-    uint public endBlock; //crowdsale end block (set in constructor)
+    uint public phase1EndBlock; //Day 1 end block
+    uint public phase2EndBlock; //Week 1 end block
+    uint public phase3EndBlock; //Week 2 end block
+    uint public phase4EndBlock; //Week 3 end block
+    uint public endBlock; //grace period & whole crowdsale end block (set in constructor)
 
     // Initial founder address (set in constructor)
     // All deposited ETH will be instantly forwarded to this address.
@@ -76,7 +80,7 @@ contract OpusCoin is StandardToken{
         if(contributions[recipient].add(msg.value)>perAddressCap) throw;
 
 
-        uint tokens = msg.value.mul(priceAgainstEther());//As decimals=18, no need to adjust for unit
+        uint tokens = msg.value.mul(returnRate());//As decimals=18, no need to adjust for unit
         balances[recipient] = balances[recipient].add(tokens);
         totalSupply = totalSupply.add(tokens);
         presaleEtherRaised = presaleEtherRaised.add(msg.value);
@@ -114,22 +118,7 @@ contract OpusCoin is StandardToken{
         AllocateFounderTokens(msg.sender);
     }
 
-    /**
-     * Set up founder address token balance.
-     *
-     * Set up bounty pool.
-     *
-     * Security review
-     *
-     * - Integer math: ok - only called once with fixed parameters
-     *
-     * Applicable tests:
-     *
-     * - Test founder token allocation too early
-     * - Test founder token allocation on time
-     * - Test founder token allocation twice
-     *
-     */
+
     function allocateBountyAndEcosystemTokens() public {
         if (msg.sender!=founder) throw;
         if (block.number <= endBlock) throw;
@@ -146,10 +135,6 @@ contract OpusCoin is StandardToken{
 
     /**
      * Emergency Stop ICO.
-     *
-     *  Applicable tests:
-     *
-     * - Test unhalting, buying, and succeeding
      */
     function halt() {
         if (msg.sender!=founder) throw;
@@ -161,10 +146,12 @@ contract OpusCoin is StandardToken{
         halted = false;
     }
 
-    function priceAgainstEther() constant returns(uint) {
-        if (block.number>=startBlock && block.number<startBlock+20) return 10000; //first 5min
-        if (block.number<startBlock || block.number>endBlock) return 5000; //default price
-        return 8888; //crowdsale price
+    function returnRate() constant returns(uint) {
+        if (block.number<startBlock || block.number>phase4EndBlock) return 5000; //default price
+        if (block.number>=startBlock || block.number<=phase1EndBlock) return 9200; //Day1 price
+        if (block.number>phase1EndBlock || block.number<=phase2EndBlock) return 8888; //Week1 price
+        if (block.number>phase2EndBlock || block.number<=phase3EndBlock) return 7500; //Week2 price
+        if (block.number>phase3EndBlock || block.number<=phase4EndBlock) return 6500; //Week3 price
     }
 
     /**
@@ -181,11 +168,17 @@ contract OpusCoin is StandardToken{
         founder = newFounder;
     }
 
-	function OpusCoin() {
-		//balances[tx.origin] = 10000;
-    startBlock = block.number;
-    endBlock = startBlock + 60;
+	function OpusCoin(address _founder, uint _startBlock) {
+  //Constructor: set founder multisig wallet address and block number for phases
+    founder = _founder;
+    startBlock = _startBlock;
+    phase1EndBlock = startBlock + 5760; //Day 1
+    phase2EndBlock = startBlock + 40320; //Week 1
+    phase3EndBlock = phase2EndBlock + 40320; //Week 2
+    phase4EndBlock = phase3EndBlock + 40320; //Week 3
+    endBlock = phase4EndBlock + 5760; //Grace period
 	}
+
 
 
 	function getBalance(address addr) returns(uint) {
@@ -221,6 +214,7 @@ contract OpusCoin is StandardToken{
 			}
 		}
 
+
 		function transferToAddress(address _to, uint _value, bytes _data) private {
 	    balances[msg.sender] = balances[msg.sender].sub(_value);
 	    balances[_to] = balances[_to].add(_value);
@@ -245,6 +239,18 @@ contract OpusCoin is StandardToken{
 	    //Transfer(msg.sender, _to, _value, _data);
 	    return true;
 	  }
+
+    function purchaseLicense (address license, uint amount, bytes _data) external {
+    //entry point to purchase songs
+      if(block.number <= endBlock){
+      //lock transfer before ICO ends
+        throw;
+      }
+      if(!isContract(license)){
+        throw;
+      }
+      transferToContract(license, amount, _data);
+    }
 
 		function getContractAddress() external constant returns(address) {
 			return this;
