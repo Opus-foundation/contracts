@@ -71,23 +71,39 @@ contract Work {
     }
 
     function tokenFallback(address _from, uint _value, bytes  _data) public {
-      if(ownership[_from]){
+      bool bounty = false;
+      if(_data){
+        bounty = true;
+        address sharer = _data;
+      }
+      if(ownership[_from] || !(msg.sender == tokenAddress)){
         throw;
       }
-      if(!(msg.sender == tokenAddress)){
+      if(bounty && (sharer == _from)){
         throw;
       }
+
       if(_value < price){
         throw;
       }
       ownership[_from] = true;
       uint refund = price.sub(_value);
-      token.transfer(owner, price);
+      if(bounty){
+        uint artistRevenue = price.sub(bountyAmount);
+        token.transfer(owner, artistRevenue);
+        token.transfer(sharer, bountyAmount);
+        PurchaseWithBounty(_from, sharer);
+      }else{
+        token.transfer(owner, price);
+        Purchase(_from);
+      }
+
       if(refund > 0){
         token.transfer(_from, refund);
       }
-      //songList.ownSong(_from);
     }
+
+
 
     function getPrice() external returns(uint){
       return price;
@@ -114,4 +130,5 @@ contract Work {
       }
       imgUrl = url;
     }
+
 }

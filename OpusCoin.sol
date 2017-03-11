@@ -8,7 +8,7 @@ import "../zeppelin-solidity/contracts/token/StandardToken.sol";
 
 
 
-contract OpusCoin is StandardToken{
+contract OpusToken is StandardToken{
   string public constant name = "OpusCrowdSaleToken2";
   string public constant symbol = "OCST2";
   uint public constant decimals = 18;
@@ -32,7 +32,7 @@ contract OpusCoin is StandardToken{
     address public founder = multisig;
     mapping (address => uint) contributions;
 
-    uint public perAddressCap = 200 * 10**18;//max amount per address can contribute;
+    //uint public perAddressCap = 200 * 10**18;//max amount per address can contribute;
     uint public etherCap = 5 * 10**18; //max amount raised during crowdsale (10M USD worth of ether will be measured with market price at beginning of the crowdsale)
     //uint public transferLockup = 370285; //transfers are locked for this many blocks after endBlock (assuming 14 second blocks, this is 2 months)
     uint public founderLockup = 2252571; //founder allocation cannot be created until this many blocks after endBlock (assuming 14 second blocks, this is 1 year)
@@ -49,6 +49,7 @@ contract OpusCoin is StandardToken{
     event Withdraw(address indexed sender, address to, uint eth);
     event AllocateFounderTokens(address indexed sender);
     event AllocateBountyAndEcosystemTokens(address indexed sender);
+
 
     function getStartBlock() constant returns(uint){
       return startBlock;
@@ -72,19 +73,20 @@ contract OpusCoin is StandardToken{
     }
 
     function buyRecipient(address recipient) payable {
+
         if(msg.value == 0){
           throw;
         }
         if(block.number<startBlock || block.number>endBlock) throw;
         if(presaleEtherRaised.add(msg.value)>etherCap || halted) throw;
-        if(contributions[recipient].add(msg.value)>perAddressCap) throw;
+        if(contributions[recipient].add(msg.value)>perAddressCap()) throw;
 
 
-        uint tokens = msg.value.mul(returnRate());//As decimals=18, no need to adjust for unit
+        uint tokens = msg.value.mul(returnRate());//As decimals==18, no need to adjust for unit
         balances[recipient] = balances[recipient].add(tokens);
+        contributions[recipient] = contributions[recipient].add(msg.value);
         totalSupply = totalSupply.add(tokens);
         presaleEtherRaised = presaleEtherRaised.add(msg.value);
-        contributions[recipient]=contributions[recipient].add(msg.value);
 
         if (!founder.send(msg.value)) throw; //immediately send Ether to founder address
 
@@ -146,12 +148,18 @@ contract OpusCoin is StandardToken{
         halted = false;
     }
 
-    function returnRate() constant returns(uint) {
+    function returnRate() constant public returns(uint) {
         if (block.number<startBlock || block.number>phase4EndBlock) return 5000; //default price
         if (block.number>=startBlock || block.number<=phase1EndBlock) return 9200; //Day1 price
         if (block.number>phase1EndBlock || block.number<=phase2EndBlock) return 8888; //Week1 price
         if (block.number>phase2EndBlock || block.number<=phase3EndBlock) return 7500; //Week2 price
         if (block.number>phase3EndBlock || block.number<=phase4EndBlock) return 6500; //Week3 price
+    }
+
+    function perAddressCap() constant public returns(uint){
+    //per address cap in Wei
+      uint baseline = 1000 * (10**18);
+      return baseline + presaleEtherRaised/100;
     }
 
     /**
@@ -168,10 +176,10 @@ contract OpusCoin is StandardToken{
         founder = newFounder;
     }
 
-	function OpusCoin(address _founder, uint _startBlock) {
+	function OpusToken() {
   //Constructor: set founder multisig wallet address and block number for phases
-    founder = _founder;
-    startBlock = _startBlock;
+    //founder = _founder;
+    startBlock = block.number;
     phase1EndBlock = startBlock + 5760; //Day 1
     phase2EndBlock = startBlock + 40320; //Week 1
     phase3EndBlock = phase2EndBlock + 40320; //Week 2
@@ -199,7 +207,7 @@ contract OpusCoin is StandardToken{
 
       if(block.number <= endBlock){
       //lock transfer before ICO ends
-        throw;
+        //throw;
       }
 			if(blackList[_to]){
 				throw;
@@ -244,7 +252,7 @@ contract OpusCoin is StandardToken{
     //entry point to purchase songs
       if(block.number <= endBlock){
       //lock transfer before ICO ends
-        throw;
+        //throw;
       }
       if(!isContract(license)){
         throw;
