@@ -1,6 +1,6 @@
 import '../zeppelin-solidity/contracts/SafeMath.sol';
 import './SongList.sol';
-import './OpusCoin.sol';
+import './OpusToken.sol';
 
 contract Work {
     using SafeMath for uint;
@@ -11,10 +11,11 @@ contract Work {
     address private songListAddress;
     SongList songList;
     address private tokenAddress;
-    OpusCoin token;
+    OpusToken token;
     //WorkType public workType;
     string public title;
     string public artist;
+    string public genre;
 
     // reference to a complete set of metadata
     //string public metadataUrl;
@@ -32,6 +33,7 @@ contract Work {
         //WorkType _workType,
         string _title,
         string _artist,
+        string _genre,
         //string _imageUrl,
         //string _metadataUrl
         string _audioUrl,
@@ -39,7 +41,7 @@ contract Work {
         ) {
         owner = msg.sender;
         tokenAddress = _token;
-        token = OpusCoin(_token);
+        token = OpusToken(_token);
         songListAddress = _songList;
         songList = SongList(_songList);
         //logger = MusicoinLogger(_loggerAddress);
@@ -51,7 +53,7 @@ contract Work {
         //logger.logWorkReleased(msg.sender, _title, _artist);
         audioUrl = _audioUrl;
         price = _price;
-
+        genre = _genre;
         //songList.addSong();
     }
 
@@ -71,39 +73,23 @@ contract Work {
     }
 
     function tokenFallback(address _from, uint _value, bytes  _data) public {
-      bool bounty = false;
-      if(_data){
-        bounty = true;
-        address sharer = _data;
-      }
-      if(ownership[_from] || !(msg.sender == tokenAddress)){
+      if(ownership[_from]){
         throw;
       }
-      if(bounty && (sharer == _from)){
+      if(!(msg.sender == tokenAddress)){
         throw;
       }
-
       if(_value < price){
         throw;
       }
       ownership[_from] = true;
       uint refund = price.sub(_value);
-      if(bounty){
-        uint artistRevenue = price.sub(bountyAmount);
-        token.transfer(owner, artistRevenue);
-        token.transfer(sharer, bountyAmount);
-        PurchaseWithBounty(_from, sharer);
-      }else{
-        token.transfer(owner, price);
-        Purchase(_from);
-      }
-
+      token.transfer(owner, price);
       if(refund > 0){
         token.transfer(_from, refund);
       }
+      //songList.ownSong(_from);
     }
-
-
 
     function getPrice() external returns(uint){
       return price;
@@ -114,7 +100,8 @@ contract Work {
       uint _price,
       bool _owned,
       address _addr,
-      string _imgUrl
+      string _imgUrl,
+      string _genre
     ){
     _title = title;
     _artist = artist;
@@ -122,6 +109,7 @@ contract Work {
     _owned = ownership[msg.sender];
     _addr = this;
     _imgUrl = imgUrl;
+    _genre = genre;
     }
 
     function setImg(string url) external {
@@ -130,5 +118,4 @@ contract Work {
       }
       imgUrl = url;
     }
-
 }
