@@ -2,8 +2,7 @@
 pragma solidity ^0.4.11;
 
 import "../zeppelin-solidity/contracts/token/StandardToken.sol";
-//import "./ConvertLib.sol";
-//import './pay2own.sol';
+
 
 
 /* Inspired by firstblook.io */
@@ -88,13 +87,7 @@ contract OpusToken is StandardToken{
         Buy(recipient, msg.value, tokens);
     }
 
-    /**
-     * Set up foundation address token balance.
-     *
-     * allocateBountyAndEcosystemTokens() must be called first.
-     *
-     *
-     */
+
     function allocatefoundationTokens() public {
         if (msg.sender!=foundation) throw;
         if (block.number <= endBlock) throw;
