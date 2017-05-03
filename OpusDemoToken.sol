@@ -7,8 +7,8 @@ import "../zeppelin-solidity/contracts/token/StandardToken.sol";
 // Inspired by firstblook.io
 
 contract OpusToken is StandardToken{
-    string public constant name = "Opus Token";
-    string public constant symbol = "OPT";
+    string public constant name = "OpusCrowdSaleToken3";
+    string public constant symbol = "OCST3";
     uint public constant decimals = 18;
     address public multisig; //multisig wallet, to which all contributions will be sent
     address public foundation; //owner address
