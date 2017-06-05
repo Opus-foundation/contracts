@@ -109,6 +109,15 @@ contract OpusToken is StandardToken{
         Transfer(this, recipient, tokens);
     }
 
+    //Burns the specified amount of tokens from the foundation
+    //Used to burn unspent funds in foundation DAO
+    function burn(uint _value) external onlyFoundation returns (bool) {
+        balances[msg.sender] = balances[msg.sender].sub(_value);
+        totalSupply = totalSupply.sub(_value);
+        Transfer(msg.sender, address(0), _value);
+        return true;
+    }
+
 	  //Allow to change the recipient multisig address in the case of emergency.
   	function setMultisig(address addr) public external onlyFoundation {
     		if (addr == address(0)) throw;
