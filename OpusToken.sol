@@ -118,6 +118,8 @@ contract OpusToken is StandardToken{
         return true;
     }
 
+    //2-phase ownership transfer;
+    //prevent transferring ownership to non-existent addresses by accident.
     function proposeFoundationTransfer(address newFoundation) external onlyFoundation {
         candidate = newFoundation;
     }
