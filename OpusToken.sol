@@ -118,6 +118,20 @@ contract OpusToken is StandardToken{
         return true;
     }
 
+    function proposeFoundationTransfer(address newFoundation) external onlyFoundation {
+        candidate = newFoundation;
+    }
+
+    function cancelFoundationTransfer() external onlyFoundation {
+        candidate = address(0);
+    }
+
+    function acceptFoundationTransfer() external {
+        if(msg.sender != candidate) throw;
+        foundation = candidate;
+        candidate = address(0);
+    }
+
 	  //Allow to change the recipient multisig address in the case of emergency.
   	function setMultisig(address addr) public external onlyFoundation {
     		if (addr == address(0)) throw;
