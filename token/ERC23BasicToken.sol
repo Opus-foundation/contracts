@@ -7,33 +7,33 @@ import '../ownership/Ownable.sol';
 
 
 contract ContractReceiver{
-  function tokenFallback(address _from, uint _value, bytes  _data) external;
+  function tokenFallback(address _from, uint256 _value, bytes  _data) external;
 }
 
 //Basic ERC23 token, backward compatible with ERC20 standards.
 //The ERC23 transfer function with signature:
-//function transfer(address _to, uint256 _value, bytes _data) is not implemented,
+//function transfer(address _to, uint256256 _value, bytes _data) is not implemented,
 //as we consider it unnecessary to pass data in transfer, and also to prevent short address attacks.
 contract ERC23BasicToken is ERC20Basic {
-    using SafeMath for uint;
+    using SafeMath for uint256;
     mapping(address => bool) public blackList;
-    mapping(address => uint) balances;
-    event Transfer(address indexed from, address indexed to, uint value);
-    event Transfer(address indexed from, address indexed to, uint value, bytes data);
+    mapping(address => uint256) balances;
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Transfer(address indexed from, address indexed to, uint256 value, bytes data);
 
     //Short address attack prevention
-    modifier onlyPayloadSize(uint size) {
+    modifier onlyPayloadSize(uint256 size) {
         if(msg.data.length != size + 4) {
             throw;
         }
         _;
     }
 
-    function tokenFallback(address _from, uint _value, bytes  _data) external {
+    function tokenFallback(address _from, uint256 _value, bytes  _data) external {
         throw;
     }
 
-    function transfer(address _to, uint _value) onlyPayloadSize(2 * 32) returns (bool success) {
+    function transfer(address _to, uint256 _value) onlyPayloadSize(2 * 32) returns (bool success) {
 
         //standard function transfer similar to ERC20 transfer with no _data
         //added due to backwards compatibility reasons
@@ -48,14 +48,14 @@ contract ERC23BasicToken is ERC20Basic {
         return true;
     }
 
-    function transferToAddress(address _to, uint _value, bytes _data) internal {
+    function transferToAddress(address _to, uint256 _value, bytes _data) internal {
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
         Transfer(msg.sender, _to, _value);
         Transfer(msg.sender, _to, _value, _data);
     }
 
-    function transferToContract(address _to, uint _value, bytes _data) internal {
+    function transferToContract(address _to, uint256 _value, bytes _data) internal {
         balances[msg.sender] = balances[msg.sender].sub( _value);
         balances[_to] = balances[_to].add( _value);
         ContractReceiver receiver = ContractReceiver(_to);
@@ -64,13 +64,13 @@ contract ERC23BasicToken is ERC20Basic {
         Transfer(msg.sender, _to, _value, _data);
     }
 
-    function balanceOf(address _owner) constant returns (uint balance) {
+    function balanceOf(address _owner) constant returns (uint256 balance) {
         return balances[_owner];
     }
 
     //assemble the given address bytecode. If bytecode exists then the _addr is a contract.
     function isContract(address _addr) returns (bool is_contract) {
-          uint length;
+          uint256 length;
           assembly {
               //retrieve the size of the code on target address, this needs assembly
               length := extcodesize(_addr)
