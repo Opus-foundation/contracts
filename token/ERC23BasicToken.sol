@@ -1,39 +1,27 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
-
-import './ERC20Basic.sol';
-import '../SafeMath.sol';
-import '../ownership/Ownable.sol';
+import './SafeMath.sol';
 
 
 contract ContractReceiver{
-  function tokenFallback(address _from, uint256 _value, bytes  _data) external;
+    function tokenFallback(address _from, uint256 _value, bytes  _data) external;
 }
 
-//Basic ERC23 token, backward compatible with ERC20 standards.
-//The ERC23 transfer function with signature:
-//function transfer(address _to, uint256256 _value, bytes _data) is not implemented,
-//as we consider it unnecessary to pass data in transfer, and also to prevent short address attacks.
-contract ERC23BasicToken is ERC20Basic {
+
+//Basic ERC23 token, backward compatible with ERC20 transfer function.
+//Based in part on code by open-zeppelin: https://github.com/OpenZeppelin/zeppelin-solidity.git
+contract ERC23BasicToken {
     using SafeMath for uint256;
-    mapping(address => bool) public blackList;
+    uint256 public totalSupply;
     mapping(address => uint256) balances;
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Transfer(address indexed from, address indexed to, uint256 value, bytes data);
-
-    //Short address attack prevention
-    modifier onlyPayloadSize(uint256 size) {
-        if(msg.data.length != size + 4) {
-            throw;
-        }
-        _;
-    }
 
     function tokenFallback(address _from, uint256 _value, bytes  _data) external {
         throw;
     }
 
-    function transfer(address _to, uint256 _value) onlyPayloadSize(2 * 32) returns (bool success) {
+    function transfer(address _to, uint256 _value) {
 
         //standard function transfer similar to ERC20 transfer with no _data
         //added due to backwards compatibility reasons
@@ -45,7 +33,6 @@ contract ERC23BasicToken is ERC20Basic {
         else {
             transferToAddress(_to, _value, empty);
         }
-        return true;
     }
 
     function transferToAddress(address _to, uint256 _value, bytes _data) internal {
