@@ -1,27 +1,29 @@
 
 pragma solidity ^0.4.11;
 
-import "../zeppelin-solidity/contracts/token/StandardToken.sol";
+import "./ERC23StandardToken.sol";
 
 
-// Inspired by firstblood.io
 
-contract OpusToken is StandardToken{
+// Based in part on code by Open-Zeppelin: https://github.com/OpenZeppelin/zeppelin-solidity.git
+// Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+contract OpusToken is ERC23StandardToken {
     string public constant name = "Opus Token";
     string public constant symbol = "OPT";
     uint256 public constant decimals = 18;
     address public multisig; //multisig wallet, to which all contributions will be sent
     address public foundation; //owner address
     address public candidate; //owner candidate in 2-phase ownership transfer
+
     mapping (address => uint256) contributions; //ether contributions in Wei
     uint256 public startBlock = 0; //crowdsale start block
     uint256 public phase1EndBlock; //Week 1 end block
     uint256 public phase2EndBlock; //Week 2 end block
     uint256 public phase3EndBlock; //Week 3 end block
     uint256 public endBlock; //whole crowdsale end block
-    uint256 public crowdsaleTokenSupply = 500 000 000 * (10**18); //Amount of tokens for sale during crowdsale
-    uint256 public ecosystemTokenSupply = 200 000 000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
-    uint256 public foundationTokenSupply = 100 000 000 * (10**18); //Tokens distributed to the Opus foundation team
+    uint256 public crowdsaleTokenSupply = 500000000 * (10**18); //Amount of tokens for sale during crowdsale
+    uint256 public ecosystemTokenSupply = 200000000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
+    uint256 public foundationTokenSupply = 100000000 * (10**18); //Tokens distributed to the Opus foundation team
     uint256 public transferLockup = 5760; //transfers are locked for 24 hours after endBlock (assuming 14 second blocks, this is 2 months)
     uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
     uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
@@ -30,9 +32,7 @@ contract OpusToken is StandardToken{
     event Unhalt();
 
     modifier onlyFoundation() {
-        if (msg.sender != foundation) {
-          throw;
-        }
+        if (msg.sender != foundation) throw;
         _;
     }
 
@@ -64,7 +64,7 @@ contract OpusToken is StandardToken{
     function start() onlyFoundation {
         if(startBlock != 0){
         //Crowdsale can only start once
-          throw;
+            throw;
         }
         startBlock = block.number;
         phase1EndBlock = startBlock + 40320; //Week 1
@@ -135,7 +135,7 @@ contract OpusToken is StandardToken{
     }
 
 	  //Allow to change the recipient multisig address in the case of emergency.
-  	function setMultisig(address addr) public external onlyFoundation {
+  	function setMultisig(address addr) external onlyFoundation {
     		if (addr == address(0)) throw;
     		multisig = addr;
   	}
@@ -144,12 +144,12 @@ contract OpusToken is StandardToken{
         return super.transfer(_to, _value, _data);
     }
 
-	  function transfer(address _to, uint256 _value) public crowdsaleTransferLock returns (bool success) {
-        return super.transfer(_to, _value);
+	  function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
+        super.transfer(_to, _value);
 	  }
 
-    function transferFrom(address _from, address _to, uint256256 _value) public crowdsaleTransferLock returns (bool success) {
-        return super.transferFrom(_from, _to, _value);
+    function transferFrom(address _from, address _to, uint256 _value) public crowdsaleTransferLock {
+        super.transferFrom(_from, _to, _value);
     }
 
     //Return rate of token against ether.
@@ -160,9 +160,9 @@ contract OpusToken is StandardToken{
     }
 
     //per address cap in Wei: 1000 ether + 1% of ether received at the given time.
-    function perAddressCap() public returns(uint256){
+    function perAddressCap() public constant returns(uint256){
         uint256 baseline = 1000 * (10**18);
-        return baseline + presaleEtherRaised/100;
+        return baseline.add(presaleEtherRaised.div(100));
     }
 
 }
