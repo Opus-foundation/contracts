@@ -1,52 +1,58 @@
 
 pragma solidity ^0.4.11;
 
-import "../zeppelin-solidity/contracts/token/StandardToken.sol";
+import "./ERC23StandardToken.sol";
 
 
-// Inspired by firstblook.io
 
-contract OpusToken is StandardToken{
-    string public constant name = "OpusCrowdSaleToken3";
-    string public constant symbol = "OCST3";
-    uint public constant decimals = 18;
+// Based in part on code by Open-Zeppelin: https://github.com/OpenZeppelin/zeppelin-solidity.git
+// Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+contract OpusToken is ERC23StandardToken {
+    string public constant name = "Opus Token";
+    string public constant symbol = "OPT";
+    uint256 public constant decimals = 18;
     address public multisig; //multisig wallet, to which all contributions will be sent
     address public foundation; //owner address
     address public candidate; //owner candidate in 2-phase ownership transfer
-    mapping (address => uint) contributions; //Contributions in Wei
-    uint public startBlock; //crowdsale start block
-    uint public phase1EndBlock; //Day 1 end block
-    uint public phase2EndBlock; //Week 1 end block
-    uint public phase3EndBlock; //Week 2 end block
-    uint public phase4EndBlock; //Week 3 end block
-    uint public endBlock; //grace period & whole crowdsale end block
-    uint public etherCap = 5 * (10**22); //max amount raised during crowdsale (50000 ether)
-    uint public transferLockup = 5760; //transfers are locked for this many blocks after endBlock (assuming 14 second blocks, this is 2 months)
-    uint public bountyAllocation = 5 * 10**16; //5% of tokens allocated post-crowdsale for the bounty fund
-    uint public foundationAllocation = 40 * 10**16; //40% of token supply allocated post-crowdsale for the foundation allocation
-    bool public bountyAllocated = false; //this will change to true when the bounty fund is allocated
-    bool public foundationAllocated = false; //this will change to true when the foundation fund is allocated
-    uint public presaleTokenSupply = 0; //this will keep track of the token supply created during the crowdsale
-    uint public presaleEtherRaised = 0; //this will keep track of the Ether raised during the crowdsale
-    bool public halted = false; //the foundation address can set this to true to halt the crowdsale due to emergency
-    bool public gracePeriodOn = false; //activated once maximum cap is reached
 
-    event Buy(address indexed sender, uint eth, uint fbt);
-    event Withdraw(address indexed sender, address to, uint eth);
-    event AllocatefoundationTokens(address indexed sender);
-    event AllocateBountyTokens(address indexed sender);
+    mapping (address => uint256) contributions; //ether contributions in Wei
+    uint256 public startBlock = 0; //crowdsale start block
+    uint256 public phase1EndBlock; //Week 1 end block
+    uint256 public phase2EndBlock; //Week 2 end block
+    uint256 public phase3EndBlock; //Week 3 end block
+    uint256 public endBlock; //whole crowdsale end block
+    uint256 public crowdsaleTokenSupply = 500000000 * (10**18); //Amount of tokens for sale during crowdsale
+    uint256 public ecosystemTokenSupply = 200000000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
+    uint256 public foundationTokenSupply = 100000000 * (10**18); //Tokens distributed to the Opus foundation team
+    uint256 public transferLockup = 5760; //transfers are locked for 24 hours after endBlock (assuming 14 second blocks, this is 2 months)
+    uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
+    uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
+    bool public halted = false; //Halt crowdsale in emergency
+    event Halt();
+    event Unhalt();
 
     modifier onlyFoundation() {
-        if (msg.sender != foundation) {
-          throw;
-        }
+        if (msg.sender != foundation) throw;
         _;
     }
 
-    //Constructor: set multisig crowdsale recipient wallet address
+    modifier crowdsaleTransferLock() {
+        if (block.number <= endBlock + transferLockup) throw;
+        _;
+    }
+
+    modifier whenNotHalted() {
+        if (halted) throw;
+        _;
+    }
+
+    //Constructor: set multisig crowdsale recipient wallet address and fund the foundation
+    //Initialize total supply and allocate ecosystem & foundation tokens
   	function OpusToken(address _multisig) {
         multisig = _multisig;
         foundation = msg.sender;
+        totalSupply = ecosystemTokenSupply.add(foundationTokenSupply);
+        balances[foundation] = totalSupply;
   	}
 
     //Fallback function when receiving Ether.
@@ -58,23 +64,24 @@ contract OpusToken is StandardToken{
     function start() onlyFoundation {
         if(startBlock != 0){
         //Crowdsale can only start once
-          throw;
+            throw;
         }
         startBlock = block.number;
-        phase1EndBlock = startBlock + 5760; //Day 1
-        phase2EndBlock = startBlock + 40320; //Week 1
-        phase3EndBlock = phase2EndBlock + 40320; //Week 2
-        phase4EndBlock = phase3EndBlock + 40320; //Week 3
-        endBlock = phase4EndBlock;
+        phase1EndBlock = startBlock + 40320; //Week 1
+        phase2EndBlock = phase1EndBlock + 40320; //Week 2
+        phase3EndBlock = phase2EndBlock + 40320; //Week 3
+        endBlock = phase3EndBlock;
     }
 
     //Halt ICO in case of emergency.
     function halt() onlyFoundation {
         halted = true;
+        Halt();
     }
 
     function unhalt() onlyFoundation {
         halted = false;
+        Unhalt();
     }
 
     function buy() payable {
@@ -82,106 +89,80 @@ contract OpusToken is StandardToken{
     }
 
     //Allow addresses to buy token for another account
-    function buyRecipient(address recipient) payable {
-        if(msg.value == 0) {
-          throw;
-        }
-        if(block.number<startBlock || block.number>endBlock || halted) throw;
+    function buyRecipient(address recipient) public payable whenNotHalted {
+        if(msg.value == 0) throw;
+        if(block.number<startBlock || block.number>endBlock) throw;
         if(contributions[recipient].add(msg.value)>perAddressCap()) throw;
-        if(presaleEtherRaised.add(msg.value)>etherCap && !gracePeriodOn) {
-          endBlock = block.number + 11520; //48h grace period begins
-          gracePeriodOn = true;
-        }
+        uint256 tokens = msg.value.mul(returnRate()); //decimals=18, so no need to adjust for unit
+        if(crowdsaleTokenSold.add(tokens)>crowdsaleTokenSupply) throw;
 
-        uint tokens = msg.value.mul(returnRate());//As decimals=18, no need to adjust for unit
         balances[recipient] = balances[recipient].add(tokens);
         totalSupply = totalSupply.add(tokens);
         presaleEtherRaised = presaleEtherRaised.add(msg.value);
         contributions[recipient] = contributions[recipient].add(msg.value);
-
+        crowdsaleTokenSold = crowdsaleTokenSold.add(tokens);
+        if(crowdsaleTokenSold == crowdsaleTokenSupply){
+        //If crowdsale token sold out, end crowdsale
+            endBlock = block.number;
+        }
         if (!multisig.send(msg.value)) throw; //immediately send Ether to multisig address
         Transfer(this, recipient, tokens);
-        Buy(recipient, msg.value, tokens);
     }
 
-    //Allocate foundation token share.
-    //allocateBountyTokens() must be called first.
-    function allocatefoundationTokens() public onlyFoundation {
-        if (block.number <= endBlock) throw;
-        if (foundationAllocated) throw;
-        if (!bountyAllocated) throw;
-        uint foundationFund = presaleTokenSupply * foundationAllocation / (1 ether);
-        balances[foundation] = balances[foundation].add(foundationFund);
-        totalSupply = totalSupply.add(foundationFund);
-        //Fund should only be allocated once
-        foundationAllocated = true;
-        AllocatefoundationTokens(msg.sender);
-    }
-
-    //Allocate bounty tokens.
-    function allocateBountyTokens() public onlyFoundation {
-        if (block.number <= endBlock) throw;
-        if (bountyAllocated) throw;
-        presaleTokenSupply = totalSupply;
-        uint bountyFund = presaleTokenSupply* bountyAllocation / (1 ether);
-        balances[foundation] = balances[foundation].add(bountyFund);
-        totalSupply = totalSupply.add(bountyFund);
-        //Fund should only be allocated once
-        bountyAllocated = true;
-        AllocateBountyTokens(msg.sender);
+    //Burns the specified amount of tokens from the foundation
+    //Used to burn unspent funds in foundation DAO
+    function burn(uint256 _value) external onlyFoundation returns (bool) {
+        balances[msg.sender] = balances[msg.sender].sub(_value);
+        totalSupply = totalSupply.sub(_value);
+        Transfer(msg.sender, address(0), _value);
+        return true;
     }
 
     //2-phase ownership transfer;
     //prevent transferring ownership to non-existent addresses by accident.
-    function proposeFoundationTransfer(address newFoundation) onlyFoundation {
+    function proposeFoundationTransfer(address newFoundation) external onlyFoundation {
         candidate = newFoundation;
     }
 
-    function cancelFoundationTransfer() onlyFoundation {
+    function cancelFoundationTransfer() external onlyFoundation {
         candidate = address(0);
     }
 
-    function acceptFoundationTransfer() {
-        if(msg.sender!=candidate){
-            throw;
-        }
+    function acceptFoundationTransfer() external {
+        if(msg.sender != candidate) throw;
         foundation = candidate;
         candidate = address(0);
     }
 
 	  //Allow to change the recipient multisig address in the case of emergency.
-  	function setMultisig(address addr) public onlyFoundation {
+  	function setMultisig(address addr) external onlyFoundation {
     		if (addr == address(0)) throw;
     		multisig = addr;
   	}
 
-	  function transfer(address _to, uint _value) onlyPayloadSize(2 * 32) returns (bool success) {
-        if (block.number <= endBlock + transferLockup && msg.sender!=foundation) {
-            //throw;
-        }
-        return super.transfer(_to, _value);
+    function transfer(address _to, uint256 _value, bytes _data) public crowdsaleTransferLock returns (bool success) {
+        return super.transfer(_to, _value, _data);
+    }
+
+	  function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
+        super.transfer(_to, _value);
 	  }
 
-    function transferFrom(address _from, address _to, uint256 _value) onlyPayloadSize(3 * 32) returns (bool success) {
-        if (block.number <= endBlock + transferLockup && msg.sender!=foundation) {
-            //throw;
-        }
-        return super.transferFrom(_from, _to, _value);
+    function transferFrom(address _from, address _to, uint256 _value) public crowdsaleTransferLock {
+        super.transferFrom(_from, _to, _value);
     }
 
     //Return rate of token against ether.
-    function returnRate() constant returns(uint) {
-        if (gracePeriodOn) return 6000; //default price
-        if (block.number>=startBlock && block.number<=phase1EndBlock) return 8888; //Day1
-        if (block.number>phase1EndBlock && block.number<=phase2EndBlock) return 8000; //Week1
-        if (block.number>phase2EndBlock && block.number<=phase3EndBlock) return 7500; //Week2
-        if (block.number>phase3EndBlock && block.number<=phase4EndBlock) return 7000; //Week3
+    function returnRate() public constant returns(uint256) {
+        if (block.number>startBlock && block.number<=phase1EndBlock) return 8888; //Week1
+        if (block.number>phase1EndBlock && block.number<=phase2EndBlock) return 8000; //Week2
+        if (block.number>phase2EndBlock && block.number<=phase3EndBlock) return 7500; //Week3
     }
 
     //per address cap in Wei: 1000 ether + 1% of ether received at the given time.
-    function perAddressCap() constant public returns(uint){
-        uint baseline = 1000 * (10**18);
-        return baseline + presaleEtherRaised/100;
+    function perAddressCap() public constant returns(uint256){
+        uint256 baseline = 1000 * (10**18);
+        return baseline.add(presaleEtherRaised.div(100));
     }
 
     function requestToken() public {
@@ -190,4 +171,5 @@ contract OpusToken is StandardToken{
         totalSupply = totalSupply.add(amount);
         Transfer(address(0), msg.sender, amount);
     }
+
 }
