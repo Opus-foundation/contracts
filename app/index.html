@@ -4,87 +4,628 @@
   <title>OpusCoin - Truffle Webpack Demo w/ Frontend</title>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <script src="./app.js"></script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="css/ie10-viewport-bug-workaround.css">
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/jquery.scrollbar.css">
+
+  <!-- Custom styles for this template -->
+  <link href="css/opus.css" rel="stylesheet">
+
 </head>
 <body>
-  <h1>OpusCoin</h1>
-  <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> OPUS</span></h3>
+  <nav class="navbar navbar-toggleable-sm">
+    <div class="container">
+      <div class="col-lg-12">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          <img src="img/opus_logo.png" alt="">
+        </a>
 
-  <br>
-  <br><label for="account">Account:</label>
-  <input type="text" id="account" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="setAccount" onclick="App.setAccount()">
-    set account
-  </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#"><i class="ico arrowLeft red"></i>Get back to</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item">OPUS Demo Tokens<br><span><i class="ico oc red"></i>
+              <span id="balance">4320</span> OPT</span></li>
+            <li class="nav-item">
+              <img src="img/avatar.png" alt="">
+              <div>Wallet Address<br><span id="account">Tester</span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-  <br>
-  <h1>Send OpusCoin</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="App.sendCoin()">Send OpusCoin</button>
-  <br><br><button id="send" onclick="App.sendEther()">Send Ether</button>
-  <br><br>
-  <span id="status"></span>
-  <br><button onclick="App.startCrowdsale()">Start crowdsale</button><br>
-  <br><button onclick="App.getBlocks()">Get blocks</button><br>
-  <br><button onclick="App.requestEther()">Get ether</button><br>
-  <br><button onclick="window.location.href = 'http://www.baidu.com';">Jump</button><br>
-  <br>
-
-  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
-
-  <br>
-<div id="uploadDivision">
-  <h1>Upload Your Music!</h1><br>
-  Name: <input type="text" id="name" placeholder="Name of your work"></input><br>
-  Artist: <input type="text" id="artist" placeholder="Name of the artist"></input><br>
-  Genre: <input type="text" id="genre" placeholder="genre yo"></input><br>
-  Price: <input type="number" id="price" placeholder="Enter a number"></input><br>
-  Select file: <input type = "file" id = "file"></input><br>
-  Image Url(optional): <input type="text" id="imgUrl" ></input><br>
-  <br>
-  <button onclick="App.captureFile()">upload</button>
-  <br>
-  <a id="link">uploaded file</a>
-  <br>
-  <a id='downloadLink' download>download</a>
-  <br>
-</div>
-
-<div id="playerDivision">
-
-  <img id = "playing-pic" > </img>
-  <audio id="audioplayer" controls autoplay></audio>
-  <span id = "timeleft" ></span>
-  <div id = "playing">
-    <span id = "playing-name"></span><br>
-    <span id = "playing-artist"></span>
-   </div>
-  <br>
-</div>
-<div id = "playList">
-  <h1>Playlist</h1>
-
-  <ul id = "yourSongs">
-
-  </ul>
-  <div id = "myCoins">
-    My balance: <span id = "opusBalance"></span> opus <br>
-    <span id="etherscan"><a id="etherscanUrl" target="_blank">
-      Click here to see trasaction records on etherscan
-    </a></span>
+  <div id = "tips" class="tips">
+    <div class="container">
+      <div class="col-lg-12 elementHorizontal">
+        <div class="tip" ><i class="ico tip red"></i>Tip</div>
+        <div align="left" id = "status">Welcome to Opus demo!
+          Please ensure you have installed and logged into MetaMask or Mist.
+          <a href="#" style="color:#f73e81">Tutorials</a></div>
+        <div class="actions">
+          <a style="cursor: pointer" onclick="App.nextTip()"><i class="ico arrowRight"></i>Go next</a>
+          <a style="cursor: pointer" onclick="App.hideTips()"><i class="ico exit"></i>Close</a>
+        </div>
+      </div>
+    </div>
   </div>
-  <br>
-  <ul id = "buyMore">
 
-  </ul>
+  <div class="container topPlayer">
+  <div class="row scrubbar">
+    <div class="col-lg-12">
+      <div class="scrubbar-bg">
+        <canvas id="scrubbar-bg"></canvas>
+      </div>
+      <div class="scrubbar-progress" id = "s-progress">
+        <canvas id="scrubbar-progress"></canvas>
+      </div>
+      <div class="scrubbar-progress-ico"><i class="ico progress" id="progress"></i></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="player">
 
-</div>
+        <div class="element">
+          <img id="topPlayerImg" src="img/cover.png" alt=""
+          style="max-height:104px; max-width:104px">
+          <div class="item">
+            <a href="#" id="player-title1"> - </a><span id="player-artist1"> -
+            </span>
+          </div>
+          <div class="item">
+            <a href="#"><i class="ico heart"></i></a>
+          </div>
+        </div>
 
-<div id = "search-div">
-  <input type="text" id="search-bar" placeholder="Search for artist, title or genre"></input><br>
-  <button onclick = "App.search();"></button>
-  <div id = "search-results"></div>
-</div>
+        <div class="element center">
+          <a style = "cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
+          <a class="play" onclick="App.playAudio()"
+          style="cursor: pointer"><i class="ico play"
+            id="playButton"></i></a>
+          <a style = "cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
+        </div>
+
+        <div class="element icons">
+          <a style="cursor: pointer" onclick="App.toggleLoop()" class="repeat">
+            <i class="ico repeat"></i></a>
+          <a style="cursor: pointer" onclick="App.toggleRandom()" class="random">
+            <i class="ico random"></i></a>
+          <a class="volume-on"><i class="ico volume-on"></i></a>
+          <div class="volume">
+            <div class="volumeBar"></div>
+          </div>
+          <a href="#" class="playlist"><i class="ico playlist"></i></a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="container">
+  <div class="row">
+    <div class="col-lg-7">
+
+      <div class="panel">
+
+
+        <ul class="nav" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#songs" role="tab">Songs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#albums" role="tab">Albums</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="songs" role="tabpanel">
+
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">01</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">02</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">03</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+            <div class="elementVertical alignCenter">
+              <a href="#" class="viewAll last">View all songs</a>
+            </div>
+
+          </div>
+          <div class="tab-pane" id="albums" role="tabpanel">
+
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">01</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">02</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+            <div class="elementHorizontal songElement"> <!-- Start Element -->
+              <div class="elementHorizontal">
+                <span class="number">03</span>
+                <img src="img/cover.png" alt="cover" class="cover">
+                <div class="elementVertical">
+                  <span class="title">My Number</span>
+                  <span>Foals</span>
+                  <span><i class="ico playCircle"></i>3:32</span>
+                </div>
+              </div>
+              <div class="elementVertical">
+                <div class="elementHorizontal hideOnSmall">
+                  <span><i class="ico playCircle"></i>36k</span>
+                  <span><i class="ico heartPlus"></i>3k</span>
+                  <span><i class="ico share"></i>352</span>
+                  <span><i class="ico comment"></i>84</span>
+                </div>
+              </div>
+            </div> <!-- End element -->
+
+            <div class="elementVertical alignCenter">
+              <a href="#" class="viewAll last">View all albums</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    <div class="panel" id="comments" style = "display: none"> <!-- comments panel -->
+        <div class="panel-header elementHorizontal">
+          <img src="img/avatar.png" alt="avatar">
+          <div class="elementVertical" style="flex-grow: 1;">
+            <textarea placeholder="Write your comment"></textarea>
+            <div class="elementHorizontal requireVertical" style="width: 100%; justify-content: space-between;">
+              <div>
+                <span><i class="ico heartPlus"></i>Like</span>
+                <span><i class="ico share"></i>Share</span>
+              </div>
+              <button class="btn"><i class="ico comment"></i>Add comment</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="numOfComments">
+          <span><i class="ico comment"></i>1134 Comments</span>
+        </div>
+
+        <div class="comments scrollbar-macosx">
+
+        <!-- Start comment -->
+        <div class="elementHorizontal songElement noborder">
+          <div class="elementHorizontal">
+            <img src="img/avatar.png" alt="avatar">
+            <div class="elementVertical">
+              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
+              <span class="text">Lorem ipsum dolor sit amet</span>
+              <div class="elementHorizontal">
+                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
+                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End comment -->
+
+        <!-- Start comment -->
+        <div class="elementHorizontal songElement noborder">
+          <div class="elementHorizontal">
+            <img src="img/avatar.png" alt="avatar">
+            <div class="elementVertical">
+              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
+              <span class="text">Lorem ipsum dolor sit amet</span>
+              <div class="elementHorizontal">
+                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
+                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End comment -->
+
+        <!-- Start comment -->
+        <div class="elementHorizontal songElement noborder">
+          <div class="elementHorizontal">
+            <img src="img/avatar.png" alt="avatar">
+            <div class="elementVertical">
+              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
+              <span class="text">Lorem ipsum dolor sit amet</span>
+              <div class="elementHorizontal">
+                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
+                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End comment -->
+
+        <!-- Start comment -->
+        <div class="elementHorizontal songElement noborder">
+          <div class="elementHorizontal">
+            <img src="img/avatar.png" alt="avatar">
+            <div class="elementVertical">
+              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
+              <span class="text">Lorem ipsum dolor sit amet</span>
+              <div class="elementHorizontal">
+                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
+                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End comment -->
+
+        </div>
+      </div> <!-- end comments panel -->
+
+      <div class="panel hightSpaces">
+        <div class="elementHorizontal">
+          <img src="img/etherscan.png" alt="#">
+          <div class="elementVertical">
+            <p><b>OPUS</b> is based on blockchain and etherum smat contract. If u want to check the details, please visit Etherscan</p>
+            <a id="etherscanUrl" target="_blank"><i class="ico arrowRight"></i>Visit Etherscan now</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-5">
+      <div class="panel"> <!-- Search panel -->
+        <div id="search" class="elementHorizontal">
+          <input type="text" placeholder="Search songs, artists..." id="search-input"
+          onchange="App.search()">
+          <button class="btn empty"
+          style = "cursor: pointer" oninput="App.search()"><i class="ico search"></i></button>
+        </div>
+        <ul id="searchResults">
+        </ul>
+      </div>
+
+      <div class="panel elementVertival" id="bs"> <!-- Buy songs pabel -->
+        <div class="panel-header elementHorizontal">
+          <h5>Buy songs</h5>
+          <a style="cursor: pointer" onclick="App.toggleBsViewAll()">view all</a>
+        </div>
+
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+          <div class="elementHorizontal">
+            <span class="number">01</span>
+            <img src="img/cover.png" alt="cover" class="cover">
+            <div class="elementVertical">
+              <span class="title">My Number</span>
+              <span>Foals</span>
+              <span><i class="ico playCircle"></i>3:32</span>
+            </div>
+          </div>
+          <div class="elementVertical detail">
+            <div class="elementHorizontal">
+              <span><i class="ico ocGray"></i>5</span>
+              <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
+            </div>
+          </div>
+        </div> <!-- End element -->
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+                <div class="elementHorizontal">
+                  <span class="number">02</span>
+                  <img src="img/cover.png" alt="cover" class="cover">
+                  <div class="elementVertical">
+                    <span class="title">My Number</span>
+                    <span>Foals</span>
+                    <span><i class="ico playCircle"></i>3:32</span>
+                  </div>
+                </div>
+                <div class="elementVertical detail">
+                  <div class="elementHorizontal">
+                    <span><i class="ico ocGray"></i>50</span>
+                    <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
+                  </div>
+                </div>
+              </div> <!-- End element -->
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+                <div class="elementHorizontal">
+                  <span class="number">03</span>
+                  <img src="img/cover.png" alt="cover" class="cover">
+                  <div class="elementVertical">
+                    <span class="title">My Number</span>
+                    <span>Foals</span>
+                    <span><i class="ico playCircle"></i>3:32</span>
+                  </div>
+                </div>
+                <div class="elementVertical detail">
+                  <div class="elementHorizontal">
+                    <span><i class="ico ocGray"></i>41</span>
+                    <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
+                  </div>
+                </div>
+              </div> <!-- End element -->
+
+        <div class="elementVertical alignCenter border-bottom"><a class="viewAll red"
+          style="cursor: pointer"
+           onclick="App.requestToken()"><i class="ico oc"></i>Request demo OPUS tokens</a></div>
+        <div class="elementVertical alignCenter"><a
+          style = "cursor: pointer" onclick="App.requestEther()" class="viewAll">Request Ether</a></div>
+
+      </div>
+
+      <div class="panel elementVertival" id="ms"> <!-- My songs panel -->
+        <div class="panel-header elementHorizontal">
+          <h5>My songs</h5>
+          <a style="cursor:pointer" onclick="App.toggleMsViewAll()" >view all</a>
+        </div>
+
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+          <div class="elementHorizontal">
+            <span class="number">01</span>
+            <img src="img/cover.png" alt="cover" class="cover">
+            <div class="elementVertical">
+              <span class="title">My Number</span>
+              <span>Foals</span>
+              <span><i class="ico playCircle"></i>3:32</span>
+            </div>
+          </div>
+          <div class="elementVertical detail">
+            <div class="elementHorizontal">
+              <span class="hideOnSmall"><i class="ico share"></i>126</span>
+              <span><i class="ico dots"></i></span>
+            </div>
+          </div>
+        </div> <!-- End element -->
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+          <div class="elementHorizontal">
+            <span class="number">02</span>
+            <img src="img/cover.png" alt="cover" class="cover">
+            <div class="elementVertical">
+              <span class="title">My Number</span>
+              <span>Foals</span>
+              <span><i class="ico playCircle"></i>3:32</span>
+            </div>
+          </div>
+          <div class="elementVertical detail">
+            <div class="elementHorizontal">
+              <span class="hideOnSmall"><i class="ico share"></i>16</span>
+              <span><i class="ico dots"></i></span>
+            </div>
+          </div>
+        </div> <!-- End element -->
+        <div class="elementHorizontal songElement"> <!-- Start Element -->
+          <div class="elementHorizontal">
+            <span class="number">03</span>
+            <img src="img/cover.png" alt="cover" class="cover">
+            <div class="elementVertical">
+              <span class="title">My Number</span>
+              <span>Foals</span>
+              <span><i class="ico playCircle"></i>3:32</span>
+            </div>
+          </div>
+          <div class="elementVertical detail">
+            <div class="elementHorizontal">
+              <span class="hideOnSmall"><i class="ico share"></i>126</span>
+              <span><i class="ico dots"></i></span>
+            </div>
+          </div>
+        </div> <!-- End element -->
+
+      </div> <!-- End my songs panel -->
+
+      <div class="panel elementVertival"> <!-- Transfer tokens panel -->
+        <div class="panel-header elementHorizontal">
+          <h5>Transfer tokens</h5>
+        </div>
+
+        <div class="elementVertical">
+          <label for="username">Receiver address</label>
+          <div class="input-group">
+            <input type="text" class="form-control form-control-with-addons" id="receiver" name="username" aria-describedby="searchIco">
+
+          </div>
+          <label for="token">Send Tokens</label>
+          <div class="input-group">
+            <input type="number" id="amount" class="form-control">
+            <button class="btn" onclick="App.sendCoin()">Send tokens</button>
+          </div>
+        </div>
+
+      </div> <!-- End transfer tokens panel -->
+    </div>
+  </div>
+  </div>
+
+  <div id="floatPlayer">
+      <div class="player">
+
+
+        <div class="element" id="float-left">
+          <img id="floatingPlayerImg" src="img/cover.png" alt="">
+          <div class="item">
+            <a href="#" id="player-title2"> - </a><span id="player-artist2"> - </span>
+          </div>
+          <div class="item hideOnSmall">
+            <a href="#"><i class="ico heart"></i></a>
+          </div>
+        </div>
+
+        <div class="element center elementVertical">
+          <div>
+            <a style = "cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
+          <a class="play" onclick="App.playAudio()" style = "cursor: pointer">
+            <i class="ico play" id="float-playButton"></i></a>
+          <a style = "cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
+          </div>
+          <div class="progress" id="float-progress-container">
+            <div class="progressBar" id="float-progress"></div>
+          </div>
+        </div>
+
+        <div class="element icons">
+          <a style="cursor: pointer" onclick="App.toggleLoop()"
+          class="repeat hideOnSmall"><i class="ico repeat"></i></a>
+          <a style="cursor: pointer" onclick="App.toggleRandom()" class="random hideOnSmall">
+            <i class="ico random"></i></a>
+          <a class="volume-on"><i class="ico volume-on"></i></a>
+          <div class="volume">
+            <div class="volumeBar"></div>
+          </div>
+          <a href="#" class="playlist hideOnSmall"><i class="ico playlist"></i></a>
+        </div>
+
+      </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="elementHorizontal">
+            <div>
+              <span>Ask us any questions</span>
+              <a href="#"><i class="ico reddit"></i></a>
+              <a href="#"><i class="ico slack"></i></a>
+              <a href="#"><i class="ico github"></i></a>
+              <a href="#"><i class="ico envelope"></i></a>
+            </div>
+            <div>
+              <span>Follow us</span>
+              <a href="#"><i class="ico fb"></i></a>
+              <a href="#"><i class="ico twitter"></i></a>
+              <a href="#"><i class="ico medium"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="elementHorizontal">
+            <a href="#"><img src="img/opus_logo.png" alt="" class="logo"></a>
+            <div class="links">
+              <a href="#">Demo</a>
+              <a href="#">Crowdsale</a>
+              <a href="#">WhitePaper</a>
+              <a href="#">Blog</a>
+              <a href="#">Contact</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+      <!-- Bootstrap core JavaScript
+      ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+      <script src="js/ie10-viewport-bug-workaround.js"></script>
+
+      <script src="js/jquery.scrollbar.min.js"></script>
+      <script src="js/scrubbar.js"></script>
+
+
+
+
+  <audio id="audioplayer" controls style="display: none"></audio>
+
 </body>
 </html>

@@ -1,0 +1,137 @@
+.top span {
+	color: #fff;
+}
+
+.backgroundGradient {
+	height: auto;
+	background: -webkit-linear-gradient(-135deg, #f73e81 0%, #4e158c 100%);
+	background: -moz-linear-gradient(-135deg, #f73e81 0%, #4e158c 100%);
+	background: -o-linear-gradient(-135deg, #f73e81 0%, #4e158c 100%);
+	background: -ms-linear-gradient(-135deg, #f73e81 0%, #4e158c 100%);
+	background: linear-gradient(225deg, #f73e81 0%, #4e158c 100%);
+	color: #fff;
+}
+
+.backgroundGradient .container-title {
+	padding: 60px 0;
+}
+
+.backgroundGradient h2 {
+	font-family: Montserrat;
+	color: #ffffff;
+	font-size: 60px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	font-weight: 700;
+	line-height: 93.576px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	transform: scaleX(1.0005);
+}
+
+.backgroundGradient p {
+	font-family: HelveticaNeueLTPro;
+	color: rgba(237, 241, 245, 0.75);
+	font-size: 16px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 36px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: center;
+}
+
+.staticBox {
+	padding: 120px 0;
+	background: #fff;
+}
+
+.staticBox p {
+	font-family: HelveticaNeueLTPro;
+	color: #848396;
+	font-size: 16.01px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 36px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	transform: scaleY(1.0007);
+}
+
+.wwa .card {
+	padding: 0;
+	border-radius: 0;
+	border: solid 1px #eeeeee;
+	margin: 15px 0;
+}
+
+.wwa .card .card-title {
+	color: #474667;
+	font-size: 18px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: center;
+}
+
+.wwa .card .card-text {
+	color: #848396;
+	font-size: 14px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: center;
+}
+
+.wwa .card .card-block > .card-block {
+	border-top: solid 1px #eeeeee;
+}
+
+.card.media .date {
+	color: #848396;
+	font-size: 13.98px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: left;
+	transform: scaleY(1.0015);
+}
+
+.card.media img {
+	width: 100%;
+}
+
+.card.media h4 {
+	color: #474667;
+	font-size: 17.97px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: left;
+	margin-top: 28px;
+}
+
+.card.media p {
+	color: #848396;
+	font-size: 13.98px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: left;
+	transform: scaleY(1.0015);
+	margin-top: 30px;
+}
+
+#buySongs {
+	background-image: url(../img/buySongs.png);
+	background-repeat: no-repeat;
+	background-size: 25%;
+	background-position: 76px bottom;
+}
+
+.badge {
+	border-radius: 5px;
+	background-color: rgba(78, 21, 140, 0.15);
+	padding: 0 10px;
+	padding-bottom: 2px;
+	color: #4e158c;
+	font-size: 13.98px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	line-height: 24px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: left;
+	transform: scaleY(1.0015);
+	font-weight: 100;
+}
+
+#demo h2 {
+	font-family: Montserrat;
+	color: #474667;
+	font-size: 48.03px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	font-weight: 700;
+	line-height: 75.273px;/* Przybliżenie (wynika z podstawienia czcionki) */
+	text-align: left;
+	transform: scaleX(1.0016);
+	margin-bottom: 50px;
+}
+
+#demo {
+	background: url("../img/demoLeft.png") no-repeat 0 0, url("../img/demoRight.png") no-repeat bottom right, #ffffff;
+	background-size: 8%, contain;
+}

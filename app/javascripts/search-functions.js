@@ -8,14 +8,14 @@ const Search = {
       return false;
     }
     console.log(work);
-    if((!work.name) || (!work.genre) || (!work.artist)){
+    if((!work.name) || (!work.artist)){
       return false;
     }
     text = text.toLowerCase();
     var title = work.name.toLowerCase();
-    var genre = work.genre.toLowerCase();
+    //var genre = work.genre.toLowerCase();
     var artist = work.artist.toLowerCase();
-    return (title.includes(text) || genre.includes(text) || artist.includes(text));
+    return (title.includes(text) || artist.includes(text));
   },
 
   search: (text, worklist) => {
