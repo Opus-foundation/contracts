@@ -1,5 +1,8 @@
 # Opus-foundation smart contracts
-Includes solidity smart contracts for opus demo token & music licensing.
+Solidity smart contracts for Opus official token, crowdsale & testnet demo token.
+<br />
+## Token Standards
+Opus token is compliant to the [ERC23](https://github.com/ethereum/EIPs/issues/223) standards, as well as backward compatible with the [ERC20](https://github.com/ethereum/eips/issues/20) standards.
+##Security Patterns
 Uses [zeppelin-solidity ERC20 library](https://github.com/OpenZeppelin/zeppelin-solidity 
-) by OpenZeppelin. <br />
-Compliant to ERC23 & ERC20 standards.
+) by OpenZeppelin.
