@@ -6,7 +6,7 @@ import "./ERC23StandardToken.sol";
 
 
 // Based in part on code by Open-Zeppelin: https://github.com/OpenZeppelin/zeppelin-solidity.git
-// Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+// Based in part on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
 contract OpusToken is ERC23StandardToken {
     string public constant name = "Opus Token";
     string public constant symbol = "OPT";
@@ -28,6 +28,7 @@ contract OpusToken is ERC23StandardToken {
     uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
     uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
     bool public halted = false; //Halt crowdsale in emergency
+    
     event Halt();
     event Unhalt();
 
@@ -48,12 +49,12 @@ contract OpusToken is ERC23StandardToken {
 
     //Constructor: set multisig crowdsale recipient wallet address and fund the foundation
     //Initialize total supply and allocate ecosystem & foundation tokens
-  	function OpusToken(address _multisig) {
+    function OpusToken(address _multisig) {
         multisig = _multisig;
         foundation = msg.sender;
         totalSupply = ecosystemTokenSupply.add(foundationTokenSupply);
         balances[foundation] = totalSupply;
-  	}
+    }
 
     //Fallback function when receiving Ether.
     function() payable {
@@ -134,19 +135,19 @@ contract OpusToken is ERC23StandardToken {
         candidate = address(0);
     }
 
-	  //Allow to change the recipient multisig address in the case of emergency.
-  	function setMultisig(address addr) external onlyFoundation {
-    		if (addr == address(0)) throw;
-    		multisig = addr;
-  	}
+    //Allow to change the recipient multisig address in the case of emergency.
+    function setMultisig(address addr) external onlyFoundation {
+	if (addr == address(0)) throw;
+	multisig = addr;
+    }
 
     function transfer(address _to, uint256 _value, bytes _data) public crowdsaleTransferLock returns (bool success) {
         return super.transfer(_to, _value, _data);
     }
 
-	  function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
+    function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
         super.transfer(_to, _value);
-	  }
+    }
 
     function transferFrom(address _from, address _to, uint256 _value) public crowdsaleTransferLock {
         super.transferFrom(_from, _to, _value);
