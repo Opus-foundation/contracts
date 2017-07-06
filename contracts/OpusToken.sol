@@ -6,7 +6,7 @@ import "./ERC23StandardToken.sol";
 
 
 // Based in part on code by Open-Zeppelin: https://github.com/OpenZeppelin/zeppelin-solidity.git
-// Based in part on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+// Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
 contract OpusToken is ERC23StandardToken {
     string public constant name = "Opus Token";
     string public constant symbol = "OPT";
@@ -20,6 +20,7 @@ contract OpusToken is ERC23StandardToken {
     uint256 public phase1EndBlock; //Week 1 end block
     uint256 public phase2EndBlock; //Week 2 end block
     uint256 public phase3EndBlock; //Week 3 end block
+    uint256 public phase4EndBlock; //Week 4 end block
     uint256 public endBlock; //whole crowdsale end block
     uint256 public crowdsaleTokenSupply = 500000000 * (10**18); //Amount of tokens for sale during crowdsale
     uint256 public ecosystemTokenSupply = 200000000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
@@ -28,7 +29,6 @@ contract OpusToken is ERC23StandardToken {
     uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
     uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
     bool public halted = false; //Halt crowdsale in emergency
-    
     event Halt();
     event Unhalt();
 
@@ -49,12 +49,12 @@ contract OpusToken is ERC23StandardToken {
 
     //Constructor: set multisig crowdsale recipient wallet address and fund the foundation
     //Initialize total supply and allocate ecosystem & foundation tokens
-    function OpusToken(address _multisig) {
+  	function OpusToken(address _multisig) {
         multisig = _multisig;
         foundation = msg.sender;
         totalSupply = ecosystemTokenSupply.add(foundationTokenSupply);
         balances[foundation] = totalSupply;
-    }
+  	}
 
     //Fallback function when receiving Ether.
     function() payable {
@@ -71,7 +71,8 @@ contract OpusToken is ERC23StandardToken {
         phase1EndBlock = startBlock + 40320; //Week 1
         phase2EndBlock = phase1EndBlock + 40320; //Week 2
         phase3EndBlock = phase2EndBlock + 40320; //Week 3
-        endBlock = phase3EndBlock;
+        phase4EndBlock = phase3EndBlock + 40320; //Week 4
+        endBlock = phase4EndBlock;
     }
 
     //Halt ICO in case of emergency.
@@ -135,19 +136,19 @@ contract OpusToken is ERC23StandardToken {
         candidate = address(0);
     }
 
-    //Allow to change the recipient multisig address in the case of emergency.
-    function setMultisig(address addr) external onlyFoundation {
-	if (addr == address(0)) throw;
-	multisig = addr;
-    }
+	  //Allow to change the recipient multisig address in the case of emergency.
+  	function setMultisig(address addr) external onlyFoundation {
+    		if (addr == address(0)) throw;
+    		multisig = addr;
+  	}
 
     function transfer(address _to, uint256 _value, bytes _data) public crowdsaleTransferLock returns (bool success) {
         return super.transfer(_to, _value, _data);
     }
 
-    function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
+	  function transfer(address _to, uint256 _value) public crowdsaleTransferLock {
         super.transfer(_to, _value);
-    }
+	  }
 
     function transferFrom(address _from, address _to, uint256 _value) public crowdsaleTransferLock {
         super.transferFrom(_from, _to, _value);
@@ -158,6 +159,7 @@ contract OpusToken is ERC23StandardToken {
         if (block.number>startBlock && block.number<=phase1EndBlock) return 8888; //Week1
         if (block.number>phase1EndBlock && block.number<=phase2EndBlock) return 8000; //Week2
         if (block.number>phase2EndBlock && block.number<=phase3EndBlock) return 7500; //Week3
+        if (block.number>phase3EndBlock && block.number<=phase4EndBlock) return 7000; //Week3
     }
 
     //per address cap in Wei: 1000 ether + 1% of ether received at the given time.
