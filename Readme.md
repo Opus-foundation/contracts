@@ -9,7 +9,7 @@ Uses [zeppelin-solidity ERC20 library](https://github.com/OpenZeppelin/zeppelin-
 ) by OpenZeppelin.
 <br />
 
-##Prerequisites
+## Prerequisites
 To install demo you need:
 
 - [npm](https://www.npmjs.com/)
@@ -26,13 +26,15 @@ To install testrpc, run:
 npm install -g ethereumjs-testrpc
 ```
 <br />
-##Build
+
+## Build
 To build demo, clone this repo and run the following command:
 ```sh
 $ npm install
 ```
 <br />
-##Running the demo
+
+## Running the demo
 To run demo, first run testrpc by running:
 ```sh
 $ testrpc
