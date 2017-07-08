@@ -25,13 +25,13 @@ To install testrpc, run:
 ```sh
 npm install -g ethereumjs-testrpc
 ```
-
+<br />
 ##Build
 To build demo, clone this repo and run the following command:
 ```sh
 $ npm install
 ```
-
+<br />
 ##Running the demo
 To run demo, first run testrpc by running:
 ```sh
