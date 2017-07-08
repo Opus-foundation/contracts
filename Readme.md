@@ -1,5 +1,5 @@
 # Opus-foundation smart contracts
-[Opus](http://opus-foundation.org/) - the worlds's first decentralised music platform, based on IPFS and Ethereum.
+[Opus](http://opus-foundation.org/) - the worlds's first decentralised music platform, based on IPFS and Ethereum. <br />
 Solidity smart contracts for Opus official token, crowdsale & testnet demo token. Also includes [advanced-demo website](http://opus-foundation.org/advanced-demo.html).
 <br />
 ## Token Standards
