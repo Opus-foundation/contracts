@@ -30,6 +30,7 @@ npm install -g ethereumjs-testrpc
 ## Build
 To build demo, clone this repo and run the following command:
 ```sh
+$ cd contracts
 $ npm install
 ```
 <br />
