@@ -53,5 +53,6 @@ Finally to build website, run:
 ```sh
 $ npm run dev
 ```
+<br />
 ## License
 All smart contracts are released under GPL v.3.
