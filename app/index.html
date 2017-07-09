@@ -1,9 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>OpusCoin - Truffle Webpack Demo w/ Frontend</title>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-  <script src="./app.js"></script>
+<html><head>
+  <title>Opus Advanced Metamask Demo (rinkeby testnet)</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+      <link rel="icon" href="img/favicon2.ico">
+  <script src="./advanced-app.js"></script><style type="text/css">body {
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-top: 10%;
+  font-family: "Open Sans", sans-serif;
+}
+
+label {
+  display: inline-block;
+  width: 100px;
+}
+
+input {
+  width: 500px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+button {
+  font-size: 16px;
+  padding: 5px;
+}
+
+h1, h2 {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #AAA;
+  font-size: 32px;
+}
+
+h3 {
+  font-weight: normal;
+  color: #AAA;
+  font-size: 24px;
+}
+
+.black {
+  color: black;
+}
+
+#balance {
+  color: black;
+}
+
+.hint {
+  color: #666;
+}
+</style>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,31 +69,41 @@
 
   <!-- Custom styles for this template -->
   <link href="css/opus.css" rel="stylesheet">
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-102190883-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 
 </head>
-<body>
+<body cz-shortcut-listen="true">
   <nav class="navbar navbar-toggleable-sm">
     <div class="container">
       <div class="col-lg-12">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="index.html">
           <img src="img/opus_logo.png" alt="">
         </a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#"><i class="ico arrowLeft red"></i>Get back to</a>
+              <a class="nav-link" href="index.html"><i class="ico arrowLeft red"></i>Get back to</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="nav-item">OPUS Demo Tokens<br><span><i class="ico oc red"></i>
-              <span id="balance">4320</span> OPT</span></li>
+              <span id="balance">0</span> OPT</span></li>
             <li class="nav-item">
               <img src="img/avatar.png" alt="">
-              <div>Wallet Address<br><span id="account">Tester</span></div>
+              <div>Wallet Address<br><span id="account">0xda83869775f69d093756b076a3354a8bbead9ad9</span></div>
             </li>
           </ul>
         </div>
@@ -50,13 +111,14 @@
     </div>
   </nav>
 
-  <div id = "tips" class="tips">
+  <div id="tips" class="tips" style="display: block;">
     <div class="container">
       <div class="col-lg-12 elementHorizontal">
-        <div class="tip" ><i class="ico tip red"></i>Tip</div>
-        <div align="left" id = "status">Welcome to Opus demo!
-          Please ensure you have installed and logged into MetaMask or Mist.
-          <a href="#" style="color:#f73e81">Tutorials</a></div>
+        <div class="tip"><i class="ico tip red"></i>Tip</div>
+        <div align="left" id="status">Welcome to Opus demo! Please ensure you have installed and logged into
+        <a href="https://metamask.io/" style="color:#F66C20" target="_blank">MetaMask</a>
+        and connected to the <span style="color:#f73e81">Rinkeby</span> test network.
+    </div>
         <div class="actions">
           <a style="cursor: pointer" onclick="App.nextTip()"><i class="ico arrowRight"></i>Go next</a>
           <a style="cursor: pointer" onclick="App.hideTips()"><i class="ico exit"></i>Close</a>
@@ -69,10 +131,10 @@
   <div class="row scrubbar">
     <div class="col-lg-12">
       <div class="scrubbar-bg">
-        <canvas id="scrubbar-bg"></canvas>
+        <canvas id="scrubbar-bg" width="930" height="106"></canvas>
       </div>
-      <div class="scrubbar-progress" id = "s-progress">
-        <canvas id="scrubbar-progress"></canvas>
+      <div class="scrubbar-progress" id="s-progress">
+        <canvas id="scrubbar-progress" width="930" height="106"></canvas>
       </div>
       <div class="scrubbar-progress-ico"><i class="ico progress" id="progress"></i></div>
     </div>
@@ -82,8 +144,7 @@
       <div class="player">
 
         <div class="element">
-          <img id="topPlayerImg" src="img/cover.png" alt=""
-          style="max-height:104px; max-width:104px">
+          <img id="topPlayerImg" src="img/cover.png" alt="" style="max-height:104px; max-width:104px">
           <div class="item">
             <a href="#" id="player-title1"> - </a><span id="player-artist1"> -
             </span>
@@ -94,11 +155,9 @@
         </div>
 
         <div class="element center">
-          <a style = "cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
-          <a class="play" onclick="App.playAudio()"
-          style="cursor: pointer"><i class="ico play"
-            id="playButton"></i></a>
-          <a style = "cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
+          <a style="cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
+          <a class="play" onclick="App.playAudio()" style="cursor: pointer"><i class="ico play" id="playButton"></i></a>
+          <a style="cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
         </div>
 
         <div class="element icons">
@@ -135,374 +194,197 @@
         </ul>
 
         <div class="tab-content">
-          <div class="tab-pane active" id="songs" role="tabpanel">
-
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">01</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">02</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">03</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-            <div class="elementVertical alignCenter">
-              <a href="#" class="viewAll last">View all songs</a>
-            </div>
+          <div class="tab-pane active" id="songs" role="tabpanel">  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">Thought of you</span>
+            <span>Doug Hoyer</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"></i>HQ</span>
 
           </div>
-          <div class="tab-pane" id="albums" role="tabpanel">
-
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">01</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">02</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-            <div class="elementHorizontal songElement"> <!-- Start Element -->
-              <div class="elementHorizontal">
-                <span class="number">03</span>
-                <img src="img/cover.png" alt="cover" class="cover">
-                <div class="elementVertical">
-                  <span class="title">My Number</span>
-                  <span>Foals</span>
-                  <span><i class="ico playCircle"></i>3:32</span>
-                </div>
-              </div>
-              <div class="elementVertical">
-                <div class="elementHorizontal hideOnSmall">
-                  <span><i class="ico playCircle"></i>36k</span>
-                  <span><i class="ico heartPlus"></i>3k</span>
-                  <span><i class="ico share"></i>352</span>
-                  <span><i class="ico comment"></i>84</span>
-                </div>
-              </div>
-            </div> <!-- End element -->
-
-            <div class="elementVertical alignCenter">
-              <a href="#" class="viewAll last">View all albums</a>
-            </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico heartPlus"></i>3k</span>
+      <a style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+          </div>
+        </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">You're mine</span>
+            <span>Doug Hoyer</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"></i>HQ</span>
 
           </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico heartPlus"></i>3k</span>
+      <a style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+          </div>
+        </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/TheLeague.png" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">soundtrack of our summer</span>
+            <span>The League</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0x8103f4d2adc9b04f953b4776f9bca802914ece4e&quot;);"></i>HQ</span>
+
+          </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico heartPlus"></i>3k</span>
+      <a style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0x8103f4d2adc9b04f953b4776f9bca802914ece4e&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+          </div>
+        </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/tlg.png" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">London again</span>
+            <span>TLG</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0x37aaca7f40a2461d3222105fc6a925c1633c48e7&quot;);"></i>HQ</span>
+
+          </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico heartPlus"></i>3k</span>
+      <a style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0x37aaca7f40a2461d3222105fc6a925c1633c48e7&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+          </div>
+        </div> </div><div class="elementVertical alignCenter">
+    <a style="cursor:pointer" class="viewAll last" onclick="App.toggleSongsViewAll()">View all songs</a>
+  </div></div>
+          <div class="tab-pane" id="albums" role="tabpanel">  <div class="elementHorizontal songElement"> <!-- Start Element -->
+          <div class="elementHorizontal">
+            <span class="number">01</span>
+      <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+            <div class="elementVertical">
+              <span class="title">Dream Life</span>
+              <span>Doug Hoyer</span>
+
+            </div>
+          </div>   <div class="elementVertical detail">
+            <div class="elementHorizontal">
+              <span><i class="ico ocGray"></i>9.9</span><a style="cursor: pointer" onclick="App.toggleSongsList(&quot;0x187d4be8039ccaea7d87e7259761f9ff021facc8&quot;);"> view</a></div>
+          </div> </div><div class="songsList" id="songsList0x187d4be8039ccaea7d87e7259761f9ff021facc8">  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">Get it right</span>
+            <span>Doug Hoyer</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0xe6358e70cfe6a53ba9df58ee45113ad28e0be78b&quot;);"></i>HQ</span>
+
+          </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0xe6358e70cfe6a53ba9df58ee45113ad28e0be78b&quot;);"></i>36k</span>
+      <span><i class="ico heartPlus"></i>3k</span><a style="cursor: pointer" onclick="App.playSong(&quot;0xe6358e70cfe6a53ba9df58ee45113ad28e0be78b&quot;);"> <i class="ico playCircleWhite"></i> Play</a>
+          </div>
+        </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">Thought of you</span>
+            <span>Doug Hoyer</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"></i>HQ</span>
+
+          </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"></i>36k</span>
+      <span><i class="ico heartPlus"></i>3k</span><a style="cursor: pointer" onclick="App.playSong(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"> <i class="ico playCircleWhite"></i> Play</a>
+          </div>
+        </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+        <div class="elementHorizontal">
+          <img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+          <div class="elementVertical">
+            <span class="title">You're mine</span>
+            <span>Doug Hoyer</span>
+            <span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"></i>HQ</span>
+
+          </div>
+        </div>   <div class="elementVertical detail">
+          <div class="elementHorizontal">
+            <span><i class="ico ocGray"></i>3.9</span><span><i class="ico playCircle" style="cursor: pointer" onclick="App.playSong(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"></i>36k</span>
+      <span><i class="ico heartPlus"></i>3k</span><a style="cursor: pointer" onclick="App.playSong(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"> <i class="ico playCircleWhite"></i> Play</a>
+          </div>
+        </div> </div></div></div>
         </div>
       </div>
 
-    <div class="panel" id="comments" style = "display: none"> <!-- comments panel -->
-        <div class="panel-header elementHorizontal">
-          <img src="img/avatar.png" alt="avatar">
-          <div class="elementVertical" style="flex-grow: 1;">
-            <textarea placeholder="Write your comment"></textarea>
-            <div class="elementHorizontal requireVertical" style="width: 100%; justify-content: space-between;">
-              <div>
-                <span><i class="ico heartPlus"></i>Like</span>
-                <span><i class="ico share"></i>Share</span>
-              </div>
-              <button class="btn"><i class="ico comment"></i>Add comment</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="numOfComments">
-          <span><i class="ico comment"></i>1134 Comments</span>
-        </div>
-
-        <div class="comments scrollbar-macosx">
-
-        <!-- Start comment -->
-        <div class="elementHorizontal songElement noborder">
-          <div class="elementHorizontal">
-            <img src="img/avatar.png" alt="avatar">
-            <div class="elementVertical">
-              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
-              <span class="text">Lorem ipsum dolor sit amet</span>
-              <div class="elementHorizontal">
-                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
-                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End comment -->
-
-        <!-- Start comment -->
-        <div class="elementHorizontal songElement noborder">
-          <div class="elementHorizontal">
-            <img src="img/avatar.png" alt="avatar">
-            <div class="elementVertical">
-              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
-              <span class="text">Lorem ipsum dolor sit amet</span>
-              <div class="elementHorizontal">
-                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
-                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End comment -->
-
-        <!-- Start comment -->
-        <div class="elementHorizontal songElement noborder">
-          <div class="elementHorizontal">
-            <img src="img/avatar.png" alt="avatar">
-            <div class="elementVertical">
-              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
-              <span class="text">Lorem ipsum dolor sit amet</span>
-              <div class="elementHorizontal">
-                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
-                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End comment -->
-
-        <!-- Start comment -->
-        <div class="elementHorizontal songElement noborder">
-          <div class="elementHorizontal">
-            <img src="img/avatar.png" alt="avatar">
-            <div class="elementVertical">
-              <span class="title">Crazy Mike <span class="sm">12 hours ago</span></span>
-              <span class="text">Lorem ipsum dolor sit amet</span>
-              <div class="elementHorizontal">
-                <a href="#"><span><i class="ico comment"></i>Reply</span></a>
-                <a href="#"><span><i class="ico heartPlus"></i>Like</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End comment -->
-
-        </div>
-      </div> <!-- end comments panel -->
+    
 
       <div class="panel hightSpaces">
         <div class="elementHorizontal">
           <img src="img/etherscan.png" alt="#">
           <div class="elementVertical">
-            <p><b>OPUS</b> is based on blockchain and etherum smat contract. If u want to check the details, please visit Etherscan</p>
-            <a id="etherscanUrl" target="_blank"><i class="ico arrowRight"></i>Visit Etherscan now</a>
+            <p>The advanced Opus demo is running on the live blockchain. If u want to view the contract handling transactions, please visit the Opus demo contract here on Etherscan.
+</p>
+            <a id="etherscanUrl" target="_blank" href="https://rinkeby.etherscan.io/token/0x25aab9c924dec517f66c70836af430d951c77aa3?a=0xda83869775f69d093756b076a3354a8bbead9ad9"><i class="ico arrowRight"></i>Visit Etherscan now</a>
           </div>
         </div>
       </div>
+
+
 
     </div>
     <div class="col-lg-5">
       <div class="panel"> <!-- Search panel -->
         <div id="search" class="elementHorizontal">
-          <input type="text" placeholder="Search songs, artists..." id="search-input"
-          onchange="App.search()">
-          <button class="btn empty"
-          style = "cursor: pointer" oninput="App.search()"><i class="ico search"></i></button>
+          <input type="text" placeholder="Search songs, artists..." id="search-input" onchange="App.search()">
+          <button class="btn empty" style="cursor: pointer" oninput="App.search()"><i class="ico search"></i></button>
         </div>
         <ul id="searchResults">
         </ul>
       </div>
 
-      <div class="panel elementVertival" id="bs"> <!-- Buy songs pabel -->
-        <div class="panel-header elementHorizontal">
-          <h5>Buy songs</h5>
-          <a style="cursor: pointer" onclick="App.toggleBsViewAll()">view all</a>
-        </div>
+      <div class="panel elementVertival" id="bs"><div class="panel-header elementHorizontal">
+        <h5>Buy songs</h5>
+        <a style="cursor:pointer" onclick="App.toggleBsViewAll()">view all</a>
+        </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+            <div class="elementHorizontal"><img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+              <div class="elementVertical">
+                <span class="title">Thought of you</span>
+                <span>Doug Hoyer</span>
+                <span><i class="ico playCircle" style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"></i>3:32</span>
+              </div>
+            </div>   <div class="elementVertical detail">
+              <div class="elementHorizontal">
+                <span><i class="ico ocGray"></i>3.9</span>
+                <a href="#" onclick="App.purchaseAndPlay(&quot;0xe1563a7e8ef8904127c404d24203156843b7f3c8&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+              </div>
+            </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+            <div class="elementHorizontal"><img src="covers/Doug-Hoyer.jpg" alt="cover" class="cover">
+              <div class="elementVertical">
+                <span class="title">You're mine</span>
+                <span>Doug Hoyer</span>
+                <span><i class="ico playCircle" style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"></i>3:32</span>
+              </div>
+            </div>   <div class="elementVertical detail">
+              <div class="elementHorizontal">
+                <span><i class="ico ocGray"></i>3.9</span>
+                <a href="#" onclick="App.purchaseAndPlay(&quot;0x5d969d1266d7f6c482e4cd9e85bc33e24b1c01f6&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+              </div>
+            </div> </div>  <div class="elementHorizontal songElement"> <!-- Start Element -->
+            <div class="elementHorizontal"><img src="covers/TheLeague.png" alt="cover" class="cover">
+              <div class="elementVertical">
+                <span class="title">soundtrack of our summer</span>
+                <span>The League</span>
+                <span><i class="ico playCircle" style="cursor: pointer" onclick="App.purchaseAndPlay(&quot;0x8103f4d2adc9b04f953b4776f9bca802914ece4e&quot;);"></i>3:32</span>
+              </div>
+            </div>   <div class="elementVertical detail">
+              <div class="elementHorizontal">
+                <span><i class="ico ocGray"></i>3.9</span>
+                <a href="#" onclick="App.purchaseAndPlay(&quot;0x8103f4d2adc9b04f953b4776f9bca802914ece4e&quot;);"> <i class="ico playCircleWhite"></i> Buy this song</a>
+              </div>
+            </div> </div><div class="elementVertical alignCenter border-bottom"><a class="viewAll red" style="cursor: pointer" onclick="App.requestToken()"><i class="ico oc"></i>
+    Request OPUS demo tokens</a></div>
+    <div class="elementVertical alignCenter"><a class="viewAll" href="https://faucet.rinkeby.io/" target="_blank">Request Ether</a></div>
+    </div>
 
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-          <div class="elementHorizontal">
-            <span class="number">01</span>
-            <img src="img/cover.png" alt="cover" class="cover">
-            <div class="elementVertical">
-              <span class="title">My Number</span>
-              <span>Foals</span>
-              <span><i class="ico playCircle"></i>3:32</span>
-            </div>
-          </div>
-          <div class="elementVertical detail">
-            <div class="elementHorizontal">
-              <span><i class="ico ocGray"></i>5</span>
-              <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
-            </div>
-          </div>
-        </div> <!-- End element -->
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-                <div class="elementHorizontal">
-                  <span class="number">02</span>
-                  <img src="img/cover.png" alt="cover" class="cover">
-                  <div class="elementVertical">
-                    <span class="title">My Number</span>
-                    <span>Foals</span>
-                    <span><i class="ico playCircle"></i>3:32</span>
-                  </div>
-                </div>
-                <div class="elementVertical detail">
-                  <div class="elementHorizontal">
-                    <span><i class="ico ocGray"></i>50</span>
-                    <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
-                  </div>
-                </div>
-              </div> <!-- End element -->
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-                <div class="elementHorizontal">
-                  <span class="number">03</span>
-                  <img src="img/cover.png" alt="cover" class="cover">
-                  <div class="elementVertical">
-                    <span class="title">My Number</span>
-                    <span>Foals</span>
-                    <span><i class="ico playCircle"></i>3:32</span>
-                  </div>
-                </div>
-                <div class="elementVertical detail">
-                  <div class="elementHorizontal">
-                    <span><i class="ico ocGray"></i>41</span>
-                    <a href="#"> <i class="ico playCircleWhite"></i> Buy this song</a>
-                  </div>
-                </div>
-              </div> <!-- End element -->
-
-        <div class="elementVertical alignCenter border-bottom"><a class="viewAll red"
-          style="cursor: pointer"
-           onclick="App.requestToken()"><i class="ico oc"></i>Request demo OPUS tokens</a></div>
-        <div class="elementVertical alignCenter"><a
-          style = "cursor: pointer" onclick="App.requestEther()" class="viewAll">Request Ether</a></div>
-
-      </div>
-
-      <div class="panel elementVertival" id="ms"> <!-- My songs panel -->
-        <div class="panel-header elementHorizontal">
-          <h5>My songs</h5>
-          <a style="cursor:pointer" onclick="App.toggleMsViewAll()" >view all</a>
-        </div>
-
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-          <div class="elementHorizontal">
-            <span class="number">01</span>
-            <img src="img/cover.png" alt="cover" class="cover">
-            <div class="elementVertical">
-              <span class="title">My Number</span>
-              <span>Foals</span>
-              <span><i class="ico playCircle"></i>3:32</span>
-            </div>
-          </div>
-          <div class="elementVertical detail">
-            <div class="elementHorizontal">
-              <span class="hideOnSmall"><i class="ico share"></i>126</span>
-              <span><i class="ico dots"></i></span>
-            </div>
-          </div>
-        </div> <!-- End element -->
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-          <div class="elementHorizontal">
-            <span class="number">02</span>
-            <img src="img/cover.png" alt="cover" class="cover">
-            <div class="elementVertical">
-              <span class="title">My Number</span>
-              <span>Foals</span>
-              <span><i class="ico playCircle"></i>3:32</span>
-            </div>
-          </div>
-          <div class="elementVertical detail">
-            <div class="elementHorizontal">
-              <span class="hideOnSmall"><i class="ico share"></i>16</span>
-              <span><i class="ico dots"></i></span>
-            </div>
-          </div>
-        </div> <!-- End element -->
-        <div class="elementHorizontal songElement"> <!-- Start Element -->
-          <div class="elementHorizontal">
-            <span class="number">03</span>
-            <img src="img/cover.png" alt="cover" class="cover">
-            <div class="elementVertical">
-              <span class="title">My Number</span>
-              <span>Foals</span>
-              <span><i class="ico playCircle"></i>3:32</span>
-            </div>
-          </div>
-          <div class="elementVertical detail">
-            <div class="elementHorizontal">
-              <span class="hideOnSmall"><i class="ico share"></i>126</span>
-              <span><i class="ico dots"></i></span>
-            </div>
-          </div>
-        </div> <!-- End element -->
-
-      </div> <!-- End my songs panel -->
+      <div class="panel elementVertival" id="ms"><div class="panel-header elementHorizontal">
+        <h5>My songs</h5>
+        <a style="cursor:pointer" onclick="App.toggleMsViewAll()">view all</a>
+        </div></div> <!-- End my songs panel -->
 
       <div class="panel elementVertival"> <!-- Transfer tokens panel -->
         <div class="panel-header elementHorizontal">
@@ -527,12 +409,12 @@
   </div>
   </div>
 
-  <div id="floatPlayer">
+  <div id="floatPlayer" style="bottom: -100%;">
       <div class="player">
 
 
         <div class="element" id="float-left">
-          <img id="floatingPlayerImg" src="img/cover.png" alt="">
+          <img id="floatingPlayerImg" src="img/cover.png" alt="" style="max-width:84px">
           <div class="item">
             <a href="#" id="player-title2"> - </a><span id="player-artist2"> - </span>
           </div>
@@ -542,11 +424,11 @@
         </div>
 
         <div class="element center elementVertical">
-          <div>
-            <a style = "cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
-          <a class="play" onclick="App.playAudio()" style = "cursor: pointer">
+          <div class="elementHorizontal">
+            <a style="cursor: pointer" onclick="App.playPrev()" class="prev"><i class="ico prev"></i></a>
+          <a class="play" onclick="App.playAudio()" style="cursor: pointer">
             <i class="ico play" id="float-playButton"></i></a>
-          <a style = "cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
+          <a style="cursor: pointer" onclick="App.playNext()" class="next"><i class="ico next"></i></a>
           </div>
           <div class="progress" id="float-progress-container">
             <div class="progressBar" id="float-progress"></div>
@@ -554,8 +436,7 @@
         </div>
 
         <div class="element icons">
-          <a style="cursor: pointer" onclick="App.toggleLoop()"
-          class="repeat hideOnSmall"><i class="ico repeat"></i></a>
+          <a style="cursor: pointer" onclick="App.toggleLoop()" class="repeat hideOnSmall"><i class="ico repeat"></i></a>
           <a style="cursor: pointer" onclick="App.toggleRandom()" class="random hideOnSmall">
             <i class="ico random"></i></a>
           <a class="volume-on"><i class="ico volume-on"></i></a>
@@ -575,16 +456,16 @@
           <div class="elementHorizontal">
             <div>
               <span>Ask us any questions</span>
-              <a href="#"><i class="ico reddit"></i></a>
-              <a href="#"><i class="ico slack"></i></a>
-              <a href="#"><i class="ico github"></i></a>
-              <a href="#"><i class="ico envelope"></i></a>
+              <a href="https://www.reddit.com/r/opusfoundation/" target="_blank"><i class="ico reddit"></i></a>
+              <a href="http://slack.opus-foundation.org/" target="_blank"><i class="ico slack"></i></a>
+              <a href="https://github.com/Opus-foundation" target="_blank"><i class="ico github"></i></a>
+              <a href="mailto:info@opus-foundation.org"><i class="ico envelope"></i></a>
             </div>
             <div>
               <span>Follow us</span>
-              <a href="#"><i class="ico fb"></i></a>
-              <a href="#"><i class="ico twitter"></i></a>
-              <a href="#"><i class="ico medium"></i></a>
+              <a href="https://www.facebook.com/Opus-129701967624235/"><i class="ico fb"></i></a>
+              <a href="https://twitter.com/opusfoundation" target="_blank"><i class="ico twitter"></i></a>
+              <!--<a href="#"><i class="ico medium"></i></a>-->
             </div>
           </div>
         </div>
@@ -597,11 +478,11 @@
           <div class="elementHorizontal">
             <a href="#"><img src="img/opus_logo.png" alt="" class="logo"></a>
             <div class="links">
-              <a href="#">Demo</a>
-              <a href="#">Crowdsale</a>
-              <a href="#">WhitePaper</a>
-              <a href="#">Blog</a>
-              <a href="#">Contact</a>
+              <a href="demo.html">Demo</a>
+              <a href="crowdsale.html">Crowdsale</a>
+              <a href="whitepaper.pdf" target="_blank">WhitePaper</a>
+              <a href="blog.html">Blog</a>
+              <a href="mailto:info@opus-foundation.org">Contact</a>
             </div>
           </div>
         </div>
@@ -620,12 +501,17 @@
       <script src="js/ie10-viewport-bug-workaround.js"></script>
 
       <script src="js/jquery.scrollbar.min.js"></script>
-      <script src="js/scrubbar.js"></script>
+      <script src="js/scrubbar.js"></script><div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"><div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div></div><div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"><div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div></div><div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"><div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div></div>
 
 
 
 
-  <audio id="audioplayer" controls style="display: none"></audio>
+  <audio id="audioplayer" controls="" style="display: none"></audio>
 
-</body>
-</html>
+
+
+
+
+
+
+</body></html>
