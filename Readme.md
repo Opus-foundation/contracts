@@ -28,6 +28,7 @@ To install testrpc, run:
 npm install -g ethereumjs-testrpc
 ```
 <br />
+
 ## Build
 To build demo, clone this repo and run the following command:
 ```sh
@@ -35,6 +36,7 @@ $ cd contracts
 $ npm install
 ```
 <br />
+
 ## Running the demo
 To run demo, first run testrpc by running:
 ```sh
@@ -54,5 +56,6 @@ Finally to build website, run:
 $ npm run dev
 ```
 <br />
+
 ## License
 All smart contracts are released under GPL v.3.
