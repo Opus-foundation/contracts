@@ -15,7 +15,7 @@ contract OpusToken is ERC23StandardToken {
     address public foundation; //owner address
     address public candidate; //owner candidate in 2-phase ownership transfer
 
-    uint256 public blockTime = 16; //Ethereum block time in seconds
+    uint256 public blockTime = 18; //Ethereum block time in seconds
     mapping (address => uint256) contributions; //ether contributions in Wei
     uint256 public startBlock = 0; //pre-crowdsale start block
     uint256 public preEndBlock; //pre-crowdsale end block
@@ -26,7 +26,7 @@ contract OpusToken is ERC23StandardToken {
     uint256 public endBlock; //whole crowdsale end block
     uint256 public crowdsaleTokenSupply = 900000000 * (10**18); //Amount of tokens for sale during crowdsale
     uint256 public ecosystemTokenSupply = 100000000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
-    uint256 public foundationTokenSupply = 600000000 * (10**18); //Tokens distributed to the founders, developers and angel investors
+    uint256 public foundationTokenSupply = 600000000 * (10**18); //Tokens distributed to the Opus foundation, developers and angel investors
     uint256 public transferLockup = 5760; //transfers are locked for 24 hours after endBlock
     uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
     uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
@@ -154,11 +154,11 @@ contract OpusToken is ERC23StandardToken {
         candidate = address(0);
     }
 
-	  //Allow to change the recipient multisig address in the case of emergency.
-  	function setMultisig(address addr) external onlyFoundation {
-    		if (addr == address(0)) throw;
-    		multisig = addr;
-  	}
+    //Allow to change the recipient multisig address in the case of emergency.
+    function setMultisig(address addr) external onlyFoundation {
+	if (addr == address(0)) throw;
+	multisig = addr;
+    }
 
     //Allow adjustment of block time
     function setBlockTime(uint256 sec) external onlyFoundation {
