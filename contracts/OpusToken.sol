@@ -11,48 +11,49 @@ contract OpusToken is ERC23StandardToken {
     string public constant name = "Opus Token";
     string public constant symbol = "OPT";
     uint256 public constant decimals = 18;
-    address public multisig; //multisig wallet, to which all contributions will be sent
+    address public multisig=address(0x1426c1f91b923043F7C5FbabC6e369e7cBaef3f0); //multisig wallet, to which all contributions will be sent
     address public foundation; //owner address
     address public candidate; //owner candidate in 2-phase ownership transfer
 
-    uint256 public blockTime = 18; //Ethereum block time in seconds
-    mapping (address => uint256) contributions; //ether contributions in Wei
-    uint256 public startBlock = 0; //pre-crowdsale start block
-    uint256 public preEndBlock; //pre-crowdsale end block
-    uint256 public phase1StartBlock; //Crowdsale start block
-    uint256 public phase1EndBlock; //Week 1 end block
-    uint256 public phase2EndBlock; //Week 2 end block
-    uint256 public phase3EndBlock; //Week 4 end block
-    uint256 public endBlock; //whole crowdsale end block
+    mapping (address => uint256) contributions; //keeps track of ether contributions in Wei of each contributor address
+    uint256 public startBlock = 4023333; //pre-crowdsale start block (30min ealier than estimate) 
+    uint256 public preEndBlock = 4057233; //pre-crowdsale end block(1h after estimated time)
+    uint256 public phase1StartBlock = 4066633; //Crowdsale start block (1h earlier)
+    uint256 public phase1EndBlock = 4100233; //Week 1 end block (estimate)
+    uint256 public phase2EndBlock = 4133833; //Week 2 end block (estimate)
+    uint256 public phase3EndBlock = 4201433; //Week 4 end block (2h later)
+    uint256 public endBlock = 4201433; //whole crowdsale end block
     uint256 public crowdsaleTokenSupply = 900000000 * (10**18); //Amount of tokens for sale during crowdsale
     uint256 public ecosystemTokenSupply = 100000000 * (10**18); //Tokens for supporting the Opus eco-system, e.g. purchasing music licenses, artist bounties, etc.
     uint256 public foundationTokenSupply = 600000000 * (10**18); //Tokens distributed to the Opus foundation, developers and angel investors
-    uint256 public transferLockup = 5760; //transfers are locked for 24 hours after endBlock
     uint256 public crowdsaleTokenSold = 0; //Keeps track of the amount of tokens sold during the crowdsale
     uint256 public presaleEtherRaised = 0; //Keeps track of the Ether raised during the crowdsale
+    uint256 public transferLockup = 9600;
     bool public halted = false; //Halt crowdsale in emergency
-    event Halt();
-    event Unhalt();
+    event Halt(); //Halt event
+    event Unhalt(); //Unhalt event
 
     modifier onlyFoundation() {
+        //only do if call is from owner modifier
         if (msg.sender != foundation) throw;
         _;
     }
 
     modifier crowdsaleTransferLock() {
-        if (block.number <= preEndBlock + transferLockup||block.number <= endBlock + transferLockup) throw;
+        // lockup during and after 48h of end of crowdsale
+        if (block.number <= endBlock.add(transferLockup)) throw;
         _;
     }
 
     modifier whenNotHalted() {
+        // only do when not halted modifier
         if (halted) throw;
         _;
     }
 
     //Constructor: set multisig crowdsale recipient wallet address and fund the foundation
     //Initialize total supply and allocate ecosystem & foundation tokens
-  	function OpusToken(address _multisig) {
-        multisig = _multisig;
+  	function OpusToken() {
         foundation = msg.sender;
         totalSupply = ecosystemTokenSupply.add(foundationTokenSupply);
         balances[foundation] = totalSupply;
@@ -63,32 +64,6 @@ contract OpusToken is ERC23StandardToken {
         buy();
     }
 
-    //Start the pre-crowdsale.
-    function startPreCrowdsale() onlyFoundation {
-        if(startBlock != 0){
-        //Pre-crowdsale can only start once
-            throw;
-        }
-        startBlock = block.number;
-        preEndBlock = startBlock.add(blockNumber(10080));
-    }
-
-    //Start the crowdsale
-    function startCrowdsale() onlyFoundation {
-        if(preEndBlock == 0 || block.number <= preEndBlock) {
-        //Crowdsale can only start after pre-crowdsale ends
-            throw;
-        }
-        if(phase1StartBlock != 0){
-        //Crowdsale can only start once
-            throw;
-        }
-        phase1StartBlock = block.number;
-        phase1EndBlock = phase1StartBlock.add(blockNumber(10080));
-        phase2EndBlock = phase1EndBlock.add(blockNumber(10080));
-        phase3EndBlock = phase2EndBlock.add(blockNumber(20160));
-        endBlock = phase3EndBlock;
-    }
 
     //Halt ICO in case of emergency.
     function halt() onlyFoundation {
@@ -108,10 +83,10 @@ contract OpusToken is ERC23StandardToken {
     //Allow addresses to buy token for another account
     function buyRecipient(address recipient) public payable whenNotHalted {
         if(msg.value == 0) throw;
-        if(!(preCrowdsaleOn()||crowdsaleOn())) throw;
-        if(contributions[recipient].add(msg.value)>perAddressCap()) throw;
+        if(!(preCrowdsaleOn()||crowdsaleOn())) throw;//only allows during presale/crowdsale
+        if(contributions[recipient].add(msg.value)>perAddressCap()) throw;//per address cap
         uint256 tokens = msg.value.mul(returnRate()); //decimals=18, so no need to adjust for unit
-        if(crowdsaleTokenSold.add(tokens)>crowdsaleTokenSupply) throw;
+        if(crowdsaleTokenSold.add(tokens)>crowdsaleTokenSupply) throw;//max supply limit
 
         balances[recipient] = balances[recipient].add(tokens);
         totalSupply = totalSupply.add(tokens);
@@ -141,6 +116,7 @@ contract OpusToken is ERC23StandardToken {
     //2-phase ownership transfer;
     //prevent transferring ownership to non-existent addresses by accident.
     function proposeFoundationTransfer(address newFoundation) external onlyFoundation {
+        //propose new owner
         candidate = newFoundation;
     }
 
@@ -149,21 +125,16 @@ contract OpusToken is ERC23StandardToken {
     }
 
     function acceptFoundationTransfer() external {
+        //new owner accept transfer to complete transfer
         if(msg.sender != candidate) throw;
         foundation = candidate;
         candidate = address(0);
     }
 
-    //Allow to change the recipient multisig address in the case of emergency.
+    //Allow to change the recipient multisig address
     function setMultisig(address addr) external onlyFoundation {
-	if (addr == address(0)) throw;
-	multisig = addr;
-    }
-
-    //Allow adjustment of block time
-    function setBlockTime(uint256 sec) external onlyFoundation {
-        if (sec == 0) throw;
-        blockTime = sec;
+      	if (addr == address(0)) throw;
+      	multisig = addr;
     }
 
     function transfer(address _to, uint256 _value, bytes _data) public crowdsaleTransferLock returns (bool success) {
@@ -193,16 +164,24 @@ contract OpusToken is ERC23StandardToken {
     }
 
     function preCrowdsaleOn() public constant returns (bool) {
+        //return whether presale is on according to block number
         return (block.number>=startBlock && block.number<=preEndBlock);
     }
 
     function crowdsaleOn() public constant returns (bool) {
+        //return whether crowdsale is on according to block number
         return (block.number>=phase1StartBlock && block.number<=endBlock);
     }
 
-    //takes the number of minutes and return the number of blocks
-    function blockNumber(uint256 minut) public constant returns(uint256) {
-        return minut.mul(60).div(blockTime);
+
+    function getEtherRaised() external constant returns (uint256) {
+        //getter function for etherRaised
+        return presaleEtherRaised;
+    }
+
+    function getTokenSold() external constant returns (uint256) {
+        //getter function for crowdsaleTokenSold
+        return crowdsaleTokenSold;
     }
 
 }
